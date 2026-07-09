@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Grievance - Code Flow Digital Grievance Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #0d9488;
+            --accent: #f97316;
+            --accent-hover: #ea580c;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --error: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --anonymous: #7c3aed;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-anonymous {
+            background: linear-gradient(135deg, var(--anonymous), #6d28d9);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-anonymous:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+        }
+
+        /* Progress Steps */
+        .progress-container {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 2rem 0;
+        }
+
+        .progress-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            z-index: 0;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+            z-index: 1;
+            transition: width 0.5s ease;
+            width: 33%;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            border-color: var(--success);
+            background: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .step.active .step-label {
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Form Header */
+        .form-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .form-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Anonymous Toggle Section */
+        .anonymous-toggle-section {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(109, 40, 217, 0.05));
+            border: 2px solid rgba(124, 58, 237, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .anonymous-toggle-section.active {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(109, 40, 217, 0.1));
+            border-color: var(--anonymous);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+        }
+
+        .toggle-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--anonymous);
+            cursor: pointer;
+        }
+
+        .toggle-label input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: var(--anonymous);
+            cursor: pointer;
+        }
+
+        .anonymous-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--anonymous);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .anonymous-info {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(124, 58, 237, 0.2);
+            display: none;
+        }
+
+        .anonymous-toggle-section.active .anonymous-info {
+            display: block;
+        }
+
+        .anonymous-warning-box {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .anonymous-warning-box.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Section Styles */
+        .form-section {
+            padding: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .form-section.hidden {
+            display: none;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.1), rgba(13, 148, 136, 0.1));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .required {
+            color: var(--error);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--text-primary);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25rem;
+            padding-right: 2.5rem;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            padding: 1rem;
+        }
+
+        .help-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Radio Group */
+        .radio-group {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .radio-label input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* CAPTCHA Styles */
+        .captcha-box {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.05), rgba(13, 148, 136, 0.05));
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .captcha-question {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .captcha-input {
+            max-width: 200px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: var(--bg);
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-light);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .file-upload.dragover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-text {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-hint {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .file-icon {
+            color: var(--primary);
+        }
+
+        .file-remove {
+            color: var(--error);
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: transform 0.2s ease;
+        }
+
+        .file-remove:hover {
+            transform: scale(1.1);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            padding: 2rem 2.5rem;
+            background: var(--bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-secondary {
+            background: rgba(200, 198, 198, 0.756);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-large {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Review Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .review-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .review-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .review-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .anonymous-notice {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(109, 40, 217, 0.1));
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--anonymous);
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--success);
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .success-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .success-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success);
+            font-size: 1.25rem;
+        }
+
+        /* Anonymous Success Modal */
+        .anonymous-success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+            padding: 1rem;
+        }
+
+        .anonymous-success-modal.active {
+            display: flex;
+        }
+
+        .anonymous-success-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 550px;
+            width: 100%;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid var(--anonymous);
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .anonymous-icon-large {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--anonymous), #6d28d9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 3rem;
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+        }
+
+        .code-display-large {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            margin: 1.5rem 0;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-display-large::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            to { left: 100%; }
+        }
+
+        .warning-pulse {
+            color: #dc2626;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Code Display */
+        .code-display {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .form-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .progress-steps {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .progress-steps::before,
+            .progress-line {
+                display: none;
+            }
+
+            .toggle-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .code-display-large {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Loading State */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spinner 0.8s linear infinite;
+        }
+
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../Home_page files/mainpg.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-code-branch"></i>
+                </div>
+                Code Flow
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="userDashboard.html">Home</a></li>
+                <li><a href="../Home_page files/contact.html">Contact Us</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <a href="../Home_page files/Login.html" class="btn btn-outline">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Steps -->
+    <div class="progress-container">
+        <div class="progress-wrapper">
+            <div class="progress-steps">
+                <div class="progress-line" id="progressLine"></div>
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+                    <span class="step-label">Fill Details</span>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+                    <span class="step-label">Review</span>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-number">3</div>
+                    <span class="step-label">Submit</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="form-header">
+            <h1>Submit Your Grievance</h1>
+            <p>Please provide accurate information to help us resolve your issue efficiently</p>
+        </div>
+
+        <form class="form-card" id="grievanceForm">
+            <!-- Anonymous Toggle Section -->
+            <div class="anonymous-toggle-section" id="anonymousSection">
+                <div class="toggle-header">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="anonymousToggle" onchange="toggleAnonymousMode()">
+                        <i class="fas fa-user-secret"></i>
+                        Submit Anonymously (Protect my identity)
+                    </label>
+                    <span class="anonymous-badge" id="anonBadge" style="display: none;">
+                        <i class="fas fa-shield-alt"></i> Anonymous Mode
+                    </span>
+                </div>
+                
+                <div class="anonymous-info" id="anonInfo">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                        <i class="fas fa-info-circle"></i> 
+                        Your identity will be hidden from the reviewer. You will receive a unique tracking code instead of email updates. 
+                        Recommended for sensitive issues like harassment or ragging.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Anonymous Warning Box -->
+            <div class="anonymous-warning-box" id="anonymousWarning">
+                <div style="display: flex; align-items: start; gap: 1rem;">
+                    <i class="fas fa-exclamation-triangle" style="color: #ea580c; font-size: 1.5rem; margin-top: 0.25rem;"></i>
+                    <div style="text-align: left;">
+                        <h4 style="color: #9a3412; margin-bottom: 0.5rem;">Important: Anonymous Submission Guidelines</h4>
+                        <ul style="color: #7c2d12; font-size: 0.9rem; padding-left: 1.2rem; margin: 0; line-height: 1.8;">
+                            <li>You will receive a <strong>unique tracking code</strong> — screenshot it immediately (we cannot recover it)</li>
+                            <li>Without this code, you <strong>cannot</strong> check status or add evidence later</li>
+                            <li>Admin may have limited ability to investigate without contacting you</li>
+                            <li>Please provide as much detail & evidence as possible below</li>
+                            <li style="color: #dc2626; font-weight: 600;">Maximum 3 anonymous submissions per day allowed</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information Section -->
+            <div class="form-section" id="personalInfoSection">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Personal Information</h2>
+                        <p class="section-subtitle">Your contact details for follow-up</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Full Name <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="fullName" name="first_name" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Roll Number <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="rollNo" name="student_id" placeholder="Enter your roll number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">University Email <span class="required">*</span></label>
+                        <input type="email" class="form-input" id="uniEmail" name="email" placeholder="your.id@university.edu" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Personal Email <span class="required">*</span></label>
+                        <input type="email" class="form-input" id="personalEmail" name="personal_email" placeholder="your.email@gmail.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Course & Current Year <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="course_year" name="course_year" placeholder="e.g., B.Tech Computer Science, 3rd Year" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Phone Number <span class="required">*</span></label>
+                        <input type="tel" class="form-input" id="phone" name="phone" placeholder="+91 98765 43210" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grievance Details Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Grievance Details</h2>
+                        <p class="section-subtitle">Describe your issue in detail</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Date of Incident <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="date" class="form-input" id="incidentDate" name="incident_date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Time of Incident</label>
+                        <div class="input-wrapper">
+                            <input type="time" class="form-input" id="incidentTime" name="incident_time">
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">What was your involvement? <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="involvement" name="involvement" placeholder="Describe your role or connection to the incident" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Location of Incident <span class="required">*</span></label>
+                        <textarea class="form-textarea" id="location" name="location" placeholder="Provide specific details about where the incident occurred (building, room number, department, etc.)" required></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Department / Category <span class="required">*</span></label>
+                        <select class="form-select" id="category" name="category" required onchange="checkSensitiveCategory()">
+                            <option value="" disabled selected>Select the relevant department</option>
+                            <option value="Academic">Academic Affairs</option>
+                            <option value="Examination & Evaluations">Examination Department</option>
+                            <option value="Administrative">Administrative Office</option>
+                            <option value="Hostel Facilities">Hostel & Accommodation</option>
+                            <option value="Library service">Library Services</option>
+                            <option value="sports">Sports & Recreation</option>
+                            <option value="Financial & others">Finance & Accounts</option>
+                            <option value="IT & Digital service">IT & Technical Support</option>
+                            <option value="security">Campus Security</option>
+                            <option value="Transport & Community">Transportation</option>
+                            <option value="canteen">Canteen & Food Services</option>
+                            <option value="Placement & Career">Placement & Career</option>
+                            <option value="Registrar office">Registrar Office</option>
+                            <option value="Harassment/Ragging" style="color: #dc2626; font-weight: 600;">⚠️ Harassment/Ragging (Anti-Ragging Cell)</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <p class="help-text">Choose the department most relevant to your grievance</p>
+                        <!-- Hidden subject field - auto-populated from category -->
+                        <input type="hidden" id="subject" name="subject" value="">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Detailed Description <span class="required">*</span></label>
+                        <textarea class="form-textarea" id="description" name="description" placeholder="Please provide a comprehensive description of your grievance. Include all relevant details, dates, and any previous communication regarding this issue." required minlength="50"></textarea>
+                        <p class="help-text">Minimum 50 characters required</p>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Were there any witnesses to the incident?</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="witnesses" value="yes" id="witnessYes">
+                                Yes
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="witnesses" value="no" id="witnessNo" checked>
+                                No
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width" id="witnessDetails" style="display: none;">
+                        <label class="form-label">Witness Details</label>
+                        <textarea class="form-textarea" id="witnessInfo" name="witness_info" placeholder="Please provide names and contact information of witnesses (if available)"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Desired Resolution <span class="required">*</span></label>
+                        <textarea class="form-textarea" id="resolution_notes" name="resolution_notes" placeholder="Describe what outcome you are expecting or what would resolve this grievance to your satisfaction" required></textarea>
+                    </div>
+                </div>
+
+                <!-- CAPTCHA for Anonymous (Hidden by default) -->
+                <div id="captchaSection" class="hidden" style="margin-top: 2rem;">
+                    <div class="captcha-box">
+                        <i class="fas fa-robot" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                        <p style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.9rem;">Security Verification</p>
+                        <div class="captcha-question" id="captchaQuestion">Loading...</div>
+                        <input type="number" class="form-input captcha-input" id="captchaAnswer" placeholder="Your answer">
+                        <input type="hidden" id="captchaExpected" value="">
+                        <p class="help-text" style="margin-top: 0.5rem;">Solve this to verify you're human</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attachments Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-paperclip"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Supporting Documents</h2>
+                        <p class="section-subtitle">Upload any evidence or relevant files</p>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <div class="file-upload" id="fileUpload">
+                        <div class="file-upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="file-upload-text">Drag & drop files here or click to browse</div>
+                        <div class="file-upload-hint">Supported: PDF, JPG, PNG, MP4 (Max 10MB each)</div>
+                        <input type="file" class="file-input" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.mp4">
+                    </div>
+                    <div class="file-list" id="fileList"></div>
+                    <p class="help-text" style="margin-top: 0.5rem; color: #dc2626; display: none;" id="anonFileWarning">
+                        <i class="fas fa-exclamation-circle"></i> For anonymous complaints, evidence is crucial as we cannot contact you for clarification.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary btn-large" onclick="saveDraft()">
+                    <i class="fas fa-save"></i> Save as Draft
+                </button>
+                <button type="button" class="btn btn-primary btn-large" onclick="reviewForm()" id="reviewBtn">
+                    Review & Submit <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <!-- Review Modal -->
+    <div class="modal-overlay" id="reviewModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Review Your Grievance</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="reviewContent">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Edit</button>
+                <button class="btn btn-primary" onclick="submitForm()" id="finalSubmitBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Grievance
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Regular Success Message -->
+    <div class="success-message" id="successMessage">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div>
+                <div style="font-weight: 700; margin-bottom: 0.25rem;">Grievance Submitted Successfully!</div>
+                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Your Grievance Code:</div>
+                <div class="code-display" id="grievanceCodeDisplay">GRV-2026-0000</div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">Save this code for future reference</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Anonymous Success Modal -->
+    <div class="anonymous-success-modal" id="anonymousSuccessModal">
+        <div class="anonymous-success-content">
+            <div class="anonymous-icon-large">
+                <i class="fas fa-user-secret"></i>
+            </div>
+            <h2 style="color: var(--anonymous); margin-bottom: 0.5rem; font-size: 1.75rem;">Anonymous Complaint Submitted</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1rem;">
+                Your identity is completely protected. Save this tracking code securely:
+            </p>
+            
+            <div class="code-display-large" id="anonCodeDisplay">
+                ANON-2026-XXXX
+            </div>
+            
+            <button onclick="copyTrackingCode()" class="btn btn-anonymous btn-large" style="width: 100%; margin-bottom: 1rem;">
+                <i class="fas fa-copy"></i> Copy Code to Clipboard
+            </button>
+            
+            <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; text-align: left;">
+                <p style="color: #92400e; font-size: 0.9rem; margin: 0;">
+                    <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Screenshot this page or save the code in your notes. 
+                    You will need it to check status updates.
+                </p>
+            </div>
+            
+            <p class="warning-pulse">
+                <i class="fas fa-exclamation-triangle"></i> 
+                If you lose this code, it CANNOT be recovered!
+            </p>
+            
+            <button onclick="closeAnonymousSuccess()" class="btn btn-outline" style="margin-top: 1rem;">
+                I have saved the code safely
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // ANONYMOUS MODE FUNCTIONS
+        // ============================================
+        
+        let isAnonymousMode = false;
+        let captchaNum1, captchaNum2;
+
+        // Auto-set subject when category changes
+        document.getElementById('category').addEventListener('change', function() {
+            const selectedText = this.options[this.selectedIndex].text;
+            // Remove emoji and warning symbols for clean subject
+            const cleanSubject = selectedText.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|⚠️/gu, '').trim();
+            document.getElementById('subject').value = cleanSubject;
+        });
+
+        function toggleAnonymousMode() {
+            const toggle = document.getElementById('anonymousToggle');
+            const anonSection = document.getElementById('anonymousSection');
+            const anonBadge = document.getElementById('anonBadge');
+            const anonInfo = document.getElementById('anonInfo');
+            const warningBox = document.getElementById('anonymousWarning');
+            const personalSection = document.getElementById('personalInfoSection');
+            const captchaSection = document.getElementById('captchaSection');
+            const fileWarning = document.getElementById('anonFileWarning');
+            
+            isAnonymousMode = toggle.checked;
+            
+            if (isAnonymousMode) {
+                // Enable anonymous styling
+                anonSection.classList.add('active');
+                anonBadge.style.display = 'inline-flex';
+                warningBox.classList.add('show');
+                personalSection.classList.add('hidden');
+                captchaSection.classList.remove('hidden');
+                fileWarning.style.display = 'block';
+                
+                // Remove required attributes from personal fields
+                document.getElementById('fullName').required = false;
+                document.getElementById('rollNo').required = false;
+                document.getElementById('uniEmail').required = false;
+                document.getElementById('personalEmail').required = false;
+                document.getElementById('course_year').required = false;
+                document.getElementById('phone').required = false;
+                
+                // Generate CAPTCHA
+                generateCaptcha();
+                
+                // Auto-suggest anonymous for sensitive categories
+                checkSensitiveCategory();
+                
+            } else {
+                // Disable anonymous styling
+                anonSection.classList.remove('active');
+                anonBadge.style.display = 'none';
+                warningBox.classList.remove('show');
+                personalSection.classList.remove('hidden');
+                captchaSection.classList.add('hidden');
+                fileWarning.style.display = 'none';
+                
+                // Restore required attributes
+                document.getElementById('fullName').required = true;
+                document.getElementById('rollNo').required = true;
+                document.getElementById('uniEmail').required = true;
+                document.getElementById('personalEmail').required = true;
+                document.getElementById('course_year').required = true;
+                document.getElementById('phone').required = true;
+            }
+        }
+
+        function checkSensitiveCategory() {
+            const dept = document.getElementById('category').value;
+            const toggle = document.getElementById('anonymousToggle');
+            
+            if ((dept === 'Harassment/Ragging') && !toggle.checked) {
+                // Suggest anonymous mode for sensitive categories
+                if (confirm('⚠️ This is a sensitive category. We strongly recommend submitting anonymously to protect your identity. Enable anonymous mode?')) {
+                    toggle.checked = true;
+                    toggleAnonymousMode();
+                }
+            }
+        }
+
+        function generateCaptcha() {
+            captchaNum1 = Math.floor(Math.random() * 10) + 1;
+            captchaNum2 = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('captchaQuestion').textContent = `${captchaNum1} + ${captchaNum2} = ?`;
+            document.getElementById('captchaExpected').value = captchaNum1 + captchaNum2;
+        }
+
+        function validateCaptcha() {
+            if (!isAnonymousMode) return true;
+            
+            const userAnswer = parseInt(document.getElementById('captchaAnswer').value);
+            const expected = parseInt(document.getElementById('captchaExpected').value);
+            
+            if (!userAnswer || userAnswer !== expected) {
+                alert('Please solve the CAPTCHA correctly to verify you are human.');
+                generateCaptcha(); // Reset CAPTCHA on failure
+                return false;
+            }
+            return true;
+        }
+
+        function checkAnonymousRateLimit() {
+            const today = new Date().toDateString();
+            const storageKey = 'anonSubmissionsByDate';
+            const anonSubmissions = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            
+            if (anonSubmissions[today] >= 3) {
+                alert('Anonymous submission limit reached for today (Max: 3 per day). Please login to submit more complaints or try tomorrow.');
+                throw new Error('Anonymous rate limit exceeded');
+            }
+            
+            anonSubmissions[today] = (anonSubmissions[today] || 0) + 1;
+            localStorage.setItem(storageKey, JSON.stringify(anonSubmissions));
+            return true;
+        }
+
+        function generateAnonymousCode() {
+            const year = new Date().getFullYear();
+            const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+            return `ANON-${year}-${random}`;
+        }
+
+        // ============================================
+        // FILE UPLOAD HANDLING WITH DATA URL CONVERSION
+        // ============================================
+        
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        let uploadedFiles = [];
+
+        fileUpload.addEventListener('click', () => fileInput.click());
+
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function fileToDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(e);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleFiles(files) {
+            for (const file of Array.from(files)) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`File ${file.name} is too large. Max size is 10MB.`);
+                    continue;
+                }
+                
+                try {
+                    const dataUrl = await fileToDataUrl(file);
+                    
+                    const fileData = {
+                        name: file.name,
+                        size: formatFileSize(file.size),
+                        type: file.type,
+                        dataUrl: dataUrl,
+                        date: new Date().toISOString().split('T')[0]
+                    };
+                    
+                    uploadedFiles.push(fileData);
+                    displayFile(fileData);
+                } catch (error) {
+                    console.error('Error reading file:', error);
+                    alert(`Error reading file ${file.name}`);
+                }
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function displayFile(fileData) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <i class="fas fa-file file-icon"></i>
+                    <span>${fileData.name}</span>
+                    <span style="color: var(--text-secondary); font-size: 0.8rem;">(${fileData.size})</span>
+                </div>
+                <i class="fas fa-times file-remove" onclick="removeFile(this, '${fileData.name}')"></i>
+            `;
+            fileList.appendChild(fileItem);
+        }
+
+        function removeFile(element, fileName) {
+            uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
+            element.parentElement.remove();
+        }
+
+        // ============================================
+        // WITNESS TOGGLE
+        // ============================================
+        
+        document.querySelectorAll('input[name="witnesses"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const witnessDetails = document.getElementById('witnessDetails');
+                witnessDetails.style.display = e.target.value === 'yes' ? 'block' : 'none';
+            });
+        });
+
+        // ============================================
+        // REVIEW FORM
+        // ============================================
+        
+        function reviewForm() {
+            // Validate CAPTCHA first if anonymous
+            if (isAnonymousMode && !validateCaptcha()) {
+                return;
+            }
+
+            const form = document.getElementById('grievanceForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Check rate limit for anonymous
+            if (isAnonymousMode) {
+                try {
+                    checkAnonymousRateLimit();
+                } catch (e) {
+                    return;
+                }
+            }
+
+            const formData = new FormData(form);
+            const reviewContent = document.getElementById('reviewContent');
+
+            // Show anonymous notice in review if applicable
+            let html = '';
+            if (isAnonymousMode) {
+                html += `
+                    <div class="anonymous-notice">
+                        <i class="fas fa-user-secret" style="font-size: 1.5rem;"></i>
+                        <div style="text-align: left;">
+                            <strong>Anonymous Submission</strong><br>
+                            <span style="font-size: 0.9rem;">Your identity will be hidden. Tracking code will be generated after submission.</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const sections = {
+                'Personal Information': isAnonymousMode ? [] : ['first_name', 'student_id', 'email', 'personal_email', 'course_year', 'phone'],
+                'Incident Details': ['incident_date', 'incident_time', 'involvement', 'location'],
+                'Grievance Info': ['category', 'description', 'resolution_notes']
+            };
+
+            for (const [section, fields] of Object.entries(sections)) {
+                if (fields.length === 0) continue;
+                
+                html += `<div style="margin-bottom: 1.5rem;"><h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">${section}</h4>`;
+                fields.forEach(field => {
+                    const value = formData.get(field);
+                    if (value) {
+                        const labelElement = document.querySelector(`[name="${field}"]`)?.previousElementSibling;
+                        const label = labelElement ? labelElement.textContent.replace(' *', '') : field;
+                        html += `
+                            <div class="review-item">
+                                <div class="review-label">${label}</div>
+                                <div class="review-value">${value}</div>
+                            </div>
+                        `;
+                    }
+                });
+                html += '</div>';
+            }
+
+            // Files
+            if (uploadedFiles.length > 0) {
+                html += `<div style="margin-bottom: 1.5rem;"><h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">Attachments (${uploadedFiles.length})</h4>`;
+                uploadedFiles.forEach(file => {
+                    html += `<div class="review-item"><div class="review-value"><i class="fas fa-paperclip" style="margin-right: 0.5rem;"></i>${file.name} (${file.size})</div></div>`;
+                });
+                html += '</div>';
+            }
+
+            reviewContent.innerHTML = html;
+            document.getElementById('reviewModal').classList.add('active');
+
+            // Update progress
+            document.getElementById('progressLine').style.width = '66%';
+            document.getElementById('step2').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('reviewModal').classList.remove('active');
+        }
+
+        // ============================================
+        // SUBMIT FORM - HANDLES BOTH MODES
+        // ============================================
+        
+        async function submitForm() {
+            const btn = document.getElementById('finalSubmitBtn');
+            btn.classList.add('btn-loading');
+            btn.innerHTML = '';
+
+            // Simulate processing delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            let grievanceData;
+            
+            if (isAnonymousMode) {
+                // Anonymous submission flow
+                const anonCode = generateAnonymousCode();
+                
+                grievanceData = {
+                    id: Date.now(),
+                    code: anonCode,
+                    trackingId: anonCode,
+                    isAnonymous: true,
+                    submissionType: 'anonymous',
+                    submissionDate: new Date().toISOString(),
+                    status: 'pending',
+                    priority: 'High', // Auto-prioritize anonymous for safety
+                    
+                    // No PII stored - using database column names
+                    first_name: 'Anonymous Student',
+                    student_id: 'ANON',
+                    email: 'anonymous@system.local',
+                    personal_email: null,
+                    course_year: 'Not disclosed',
+                    phone: null,
+                    
+                    // Grievance details - using database column names
+                    incident_date: document.getElementById('incidentDate').value,
+                    incident_time: document.getElementById('incidentTime').value,
+                    involvement: document.getElementById('involvement').value,
+                    location: document.getElementById('location').value,
+                    category: document.getElementById('category').value,
+                    subject: document.getElementById('subject').value,
+                    description: document.getElementById('description').value,
+                    witnesses: document.querySelector('input[name="witnesses"]:checked')?.value || 'no',
+                    witness_info: document.getElementById('witnessInfo')?.value || '',
+                    resolution_notes: document.getElementById('resolution_notes').value,
+                    
+                    // Attachments
+                    attachments: uploadedFiles,
+                    
+                    // Admin fields
+                    adminNotes: 'Anonymous submission - Verify captcha passed. Handle with care.',
+                    reviewedBy: '',
+                    reviewDate: '',
+                    reviewComments: ''
+                };
+                
+                // Store separately for extra privacy
+                storeAnonymousGrievance(grievanceData);
+                
+                // Close review modal and show anonymous success
+                closeModal();
+                document.getElementById('anonCodeDisplay').textContent = anonCode;
+                document.getElementById('anonymousSuccessModal').classList.add('active');
+                
+            } else {
+                // Regular submission flow
+                const grievanceCode = generateGrievanceCode();
+                
+                grievanceData = {
+                    id: Date.now(),
+                    code: grievanceCode,
+                    trackingId: grievanceCode,
+                    isAnonymous: false,
+                    submissionType: 'identified',
+                    submissionDate: new Date().toISOString(),
+                    
+                    // Personal Info - using database column names
+                    first_name: document.getElementById('fullName').value,
+                    student_id: document.getElementById('rollNo').value,
+                    email: document.getElementById('uniEmail').value,
+                    personal_email: document.getElementById('personalEmail').value,
+                    course_year: document.getElementById('course_year').value,
+                    phone: document.getElementById('phone').value,
+                    
+                    // Grievance Details - using database column names
+                    incident_date: document.getElementById('incidentDate').value,
+                    incident_time: document.getElementById('incidentTime').value,
+                    involvement: document.getElementById('involvement').value,
+                    location: document.getElementById('location').value,
+                    category: document.getElementById('category').value,
+                    subject: document.getElementById('subject').value,
+                    description: document.getElementById('description').value,
+                    witnesses: document.querySelector('input[name="witnesses"]:checked')?.value || 'no',
+                    witness_info: document.getElementById('witnessInfo')?.value || '',
+                    resolution_notes: document.getElementById('resolution_notes').value,
+                    
+                    // Status & Meta
+                    status: 'pending',
+                    priority: 'Normal',
+                    
+                    // Attachments
+                    attachments: uploadedFiles,
+                    
+                    // Admin fields
+                    adminNotes: '',
+                    reviewedBy: '',
+                    reviewDate: '',
+                    reviewComments: ''
+                };
+
+                storeGrievance(grievanceData);
+                
+                // Update UI
+                closeModal();
+                document.getElementById('grievanceCodeDisplay').textContent = grievanceCode;
+                document.getElementById('successMessage').style.display = 'block';
+
+                // Update progress
+                document.getElementById('progressLine').style.width = '100%';
+                document.getElementById('step3').classList.add('completed');
+
+                // Redirect after 3 seconds
+                setTimeout(() => {
+                    window.location.href = `Grievance_case_reviewpage.html?code=${grievanceCode}`;
+                }, 3000);
+            }
+
+            btn.classList.remove('btn-loading');
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Grievance';
+        }
+
+        function generateGrievanceCode() {
+            const year = new Date().getFullYear();
+            const random = Math.floor(1000 + Math.random() * 9000);
+            const prefix = 'GRV';
+            return `${prefix}-${year}-${random}`;
+        }
+
+        // ============================================
+        // DATA STORAGE FUNCTIONS
+        // ============================================
+        
+        function storeGrievance(grievanceData) {
+            let database = JSON.parse(localStorage.getItem('grievanceDatabase') || '{}');
+            const category = grievanceData.category || 'General';
+            
+            if (!database[category]) {
+                database[category] = [];
+            }
+            
+            database[category].push(grievanceData);
+            localStorage.setItem('grievanceDatabase', JSON.stringify(database));
+            
+            // Also store in recent for immediate access
+            localStorage.setItem('recentGrievance', JSON.stringify(grievanceData));
+            
+            // Update check status data
+            const checkStatusData = {
+                code: grievanceData.code,
+                date: grievanceData.submissionDate.split('T')[0],
+                email: grievanceData.email,
+                complainant: grievanceData.first_name + ' ' + (grievanceData.last_name || ''),
+                status: 'processing',
+                category: grievanceData.category,
+                isAnonymous: false
+            };
+            
+            let existingData = JSON.parse(localStorage.getItem('checkStatusGrievances') || '[]');
+            existingData.push(checkStatusData);
+            localStorage.setItem('checkStatusGrievances', JSON.stringify(existingData));
+        }
+
+        function storeAnonymousGrievance(grievanceData) {
+            // Store in separate anonymous bucket for privacy
+            let anonDatabase = JSON.parse(localStorage.getItem('anonymousGrievanceDatabase') || '[]');
+            anonDatabase.push(grievanceData);
+            localStorage.setItem('anonymousGrievanceDatabase', JSON.stringify(anonDatabase));
+            
+            // Also store mapping in check status (without PII)
+            const checkStatusData = {
+                code: grievanceData.code,
+                date: grievanceData.submissionDate.split('T')[0],
+                email: 'anonymous@system.local',
+                complainant: 'Anonymous Student',
+                status: 'processing',
+                category: grievanceData.category,
+                isAnonymous: true
+            };
+            
+            let existingData = JSON.parse(localStorage.getItem('checkStatusGrievances') || '[]');
+            existingData.push(checkStatusData);
+            localStorage.setItem('checkStatusGrievances', JSON.stringify(existingData));
+            
+            // Store as recent
+            localStorage.setItem('recentGrievance', JSON.stringify(grievanceData));
+        }
+
+        // ============================================
+        // ANONYMOUS SUCCESS MODAL FUNCTIONS
+        // ============================================
+        
+        function copyTrackingCode() {
+            const code = document.getElementById('anonCodeDisplay').textContent.trim();
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(() => {
+                    showCopyFeedback();
+                });
+            } else {
+                // Fallback
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopyFeedback();
+            }
+        }
+
+        function showCopyFeedback() {
+            const btn = event.target.closest('button');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            btn.style.background = 'var(--success)';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.style.background = '';
+            }, 2000);
+        }
+
+        function closeAnonymousSuccess() {
+            document.getElementById('anonymousSuccessModal').classList.remove('active');
+            
+            // Update progress
+            document.getElementById('progressLine').style.width = '100%';
+            document.getElementById('step3').classList.add('completed');
+            
+            // Redirect to track page (they'll need to enter code manually)
+            setTimeout(() => {
+                window.location.href = 'user_checkstatus.html'; // Your status check page
+            }, 500);
+        }
+
+        // ============================================
+        // SAVE DRAFT
+        // ============================================
+        
+        function saveDraft() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            const draftData = {
+                savedAt: new Date().toISOString(),
+                isAnonymousDraft: isAnonymousMode,
+                
+                // Save based on current mode - using database column names
+                first_name: isAnonymousMode ? '' : document.getElementById('fullName').value,
+                student_id: isAnonymousMode ? '' : document.getElementById('rollNo').value,
+                email: isAnonymousMode ? '' : document.getElementById('uniEmail').value,
+                personal_email: isAnonymousMode ? '' : document.getElementById('personalEmail').value,
+                course_year: isAnonymousMode ? '' : document.getElementById('course_year').value,
+                phone: isAnonymousMode ? '' : document.getElementById('phone').value,
+                
+                // Common fields - using database column names
+                incident_date: document.getElementById('incidentDate').value,
+                incident_time: document.getElementById('incidentTime').value,
+                involvement: document.getElementById('involvement').value,
+                location: document.getElementById('location').value,
+                category: document.getElementById('category').value,
+                subject: document.getElementById('subject').value,
+                description: document.getElementById('description').value,
+                witnesses: document.querySelector('input[name="witnesses"]:checked')?.value || 'no',
+                witness_info: document.getElementById('witnessInfo')?.value || '',
+                resolution_notes: document.getElementById('resolution_notes').value,
+                attachments: uploadedFiles.map(f => ({ name: f.name, size: f.size, type: f.type }))
+            };
+            
+            localStorage.setItem('grievanceDraft', JSON.stringify(draftData));
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            }, 1000);
+        }
+
+        // ============================================
+        // LOAD DRAFT ON PAGE LOAD
+        // ============================================
+        
+        function loadDraft() {
+            const draft = localStorage.getItem('grievanceDraft');
+            if (!draft) return;
+            
+            const data = JSON.parse(draft);
+            
+            // Restore anonymous mode if it was saved that way
+            if (data.isAnonymousDraft) {
+                document.getElementById('anonymousToggle').checked = true;
+                toggleAnonymousMode();
+            }
+            
+            // Restore fields (only if not anonymous) - using database column names
+            if (!data.isAnonymousDraft) {
+                if (data.first_name) document.getElementById('fullName').value = data.first_name;
+                if (data.student_id) document.getElementById('rollNo').value = data.student_id;
+                if (data.email) document.getElementById('uniEmail').value = data.email;
+                if (data.personal_email) document.getElementById('personalEmail').value = data.personal_email;
+                if (data.course_year) document.getElementById('course_year').value = data.course_year;
+                if (data.phone) document.getElementById('phone').value = data.phone;
+            }
+            
+            // Restore common fields - using database column names
+            if (data.incident_date) document.getElementById('incidentDate').value = data.incident_date;
+            if (data.incident_time) document.getElementById('incidentTime').value = data.incident_time;
+            if (data.involvement) document.getElementById('involvement').value = data.involvement;
+            if (data.location) document.getElementById('location').value = data.location;
+            if (data.category) {
+                document.getElementById('category').value = data.category;
+                // Trigger subject update
+                const event = new Event('change');
+                document.getElementById('category').dispatchEvent(event);
+            }
+            if (data.description) document.getElementById('description').value = data.description;
+            if (data.resolution_notes) document.getElementById('resolution_notes').value = data.resolution_notes;
+            
+            // Restore witnesses
+            if (data.witnesses === 'yes') {
+                document.getElementById('witnessYes').checked = true;
+                document.getElementById('witnessDetails').style.display = 'block';
+                if (data.witness_info) document.getElementById('witnessInfo').value = data.witness_info;
+            }
+            
+            // Restore files (metadata only)
+            if (data.attachments) {
+                data.attachments.forEach(file => {
+                    uploadedFiles.push(file);
+                    displayFile(file);
+                });
+            }
+        }
+
+        // Load draft on page load
+        document.addEventListener('DOMContentLoaded', loadDraft);
+
+        // Close modals on outside click
+        document.getElementById('reviewModal').addEventListener('click', (e) => {
+            if (e.target.id === 'reviewModal') closeModal();
+        });
+
+        document.getElementById('anonymousSuccessModal').addEventListener('click', (e) => {
+            if (e.target.id === 'anonymousSuccessModal') {
+                // Don't auto-close on outside click for anonymous modal (they might misclick and lose code)
+                // But maybe add a subtle shake animation to indicate they need to save the code
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grievance Case Review - Download</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #f1f5f9;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f8;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        .download-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Main Document Card */
+        .document-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .document-header {
+            background: linear-gradient(135deg, var(--dark), #334155);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .document-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .document-header p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .document-body {
+            padding: 2rem;
+        }
+
+        /* Section Styling */
+        .section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary);
+            width: fit-content;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .info-value.highlight {
+            color: var(--primary);
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.875rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-processing {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-solved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-review {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        /* Description Box */
+        .description-box {
+            background: var(--light-gray);
+            padding: 1.25rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .description-box p {
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .description-box .label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Attachments Section */
+        .attachments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--light-gray);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .attachment-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .attachment-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .attachment-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .attachment-icon.image {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .attachment-icon.pdf {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .attachment-icon.video {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .attachment-icon.document {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .attachment-details h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .attachment-details p {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .attachment-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* Video Preview Special Styling */
+        .video-preview {
+            position: relative;
+            width: 120px;
+            height: 80px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+        }
+
+        .video-preview .play-overlay {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--danger);
+            font-size: 1rem;
+        }
+
+        .video-badge {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Footer Note */
+        .document-footer {
+            background: var(--light-gray);
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .document-footer p {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .document-footer .timestamp {
+            font-weight: 600;
+            color: var(--dark);
+            margin-top: 0.5rem;
+        }
+
+        /* Not Found State */
+        .not-found {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .not-found i {
+            font-size: 4rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        .not-found h2 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .not-found p {
+            color: var(--gray);
+        }
+
+        /* Print Styles */
+        @media print {
+            .header-actions, .btn {
+                display: none !important;
+            }
+            
+            .document-card {
+                box-shadow: none;
+                border: 1px solid #000;
+            }
+            
+            body {
+                background: white;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .attachment-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <a href="#" class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+            
+            <div class="download-actions">
+                <button class="btn btn-outline" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button class="btn btn-primary" onclick="downloadPDF()">
+                    <i class="fas fa-download"></i> Download PDF Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Dynamic Content Container -->
+        <div id="contentContainer">
+            <!-- Content will be loaded dynamically -->
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // GRIEVANCE DATA MANAGEMENT SYSTEM
+        // ============================================
+
+        // Get grievance code from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const grievanceCode = urlParams.get('code') || urlParams.get('id');
+
+        // Get all grievances from localStorage
+        function getAllGrievances() {
+            const stored = localStorage.getItem('grievanceDatabase');
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            return {};
+        }
+
+        // Get specific grievance by code
+        function getGrievanceByCode(code) {
+            const database = getAllGrievances();
+            
+            // Search in all categories
+            for (const category in database) {
+                const grievance = database[category].find(g => g.code === code);
+                if (grievance) {
+                    return { ...grievance, category };
+                }
+            }
+            return null;
+        }
+
+        // Get grievance from session (recently submitted)
+        function getRecentGrievance() {
+            const recent = localStorage.getItem('recentGrievance');
+            if (recent) {
+                return JSON.parse(recent);
+            }
+            return null;
+        }
+
+        // ============================================
+        // PAGE INITIALIZATION
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let grievanceData = null;
+            let source = '';
+
+            // Try to get grievance by code from URL
+            if (grievanceCode) {
+                grievanceData = getGrievanceByCode(grievanceCode);
+                if (grievanceData) {
+                    source = 'database';
+                }
+            }
+
+            // If not found in database, check recent submission
+            if (!grievanceData) {
+                const recent = getRecentGrievance();
+                if (recent && (recent.code === grievanceCode || !grievanceCode)) {
+                    grievanceData = recent;
+                    source = 'recent';
+                }
+            }
+
+            // If still not found, show not found message
+            if (!grievanceData) {
+                showNotFound();
+                return;
+            }
+
+            // Render the grievance details
+            renderGrievance(grievanceData);
+        });
+
+        // ============================================
+        // RENDER FUNCTIONS
+        // ============================================
+
+        function renderGrievance(data) {
+            const container = document.getElementById('contentContainer');
+            
+            // Format dates
+            const submissionDate = data.submissionDate || data.date || new Date().toISOString().split('T')[0];
+            const incidentDate = data.incidentDate || data.dateOfIncident || 'Not specified';
+            const incidentTime = data.incidentTime || 'Not specified';
+            
+            // Format status
+            const statusClass = getStatusClass(data.status);
+            const statusText = getStatusText(data.status);
+            
+            // Generate attachments HTML
+            const attachmentsHtml = generateAttachmentsHtml(data.attachments || []);
+            
+            // Build the document HTML
+            container.innerHTML = `
+                <!-- Main Document -->
+                <div class="document-card" id="grievanceDocument">
+                    
+                    <!-- Document Header -->
+                    <div class="document-header">
+                        <h1><i class="fas fa-file-contract"></i> Grievance Case Review</h1>
+                        <p>Official Record - Code Flow Digital Grievance Portal</p>
+                    </div>
+
+                    <div class="document-body">
+                        
+                        <!-- Case Overview Section -->
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-info-circle"></i> Case Overview
+                            </h2>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">Grievance Code</span>
+                                    <span class="info-value highlight">${data.code}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Submission Date</span>
+                                    <span class="info-value">${formatDate(submissionDate)}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Status</span>
+                                    <span class="status-badge ${statusClass}">
+                                        <i class="fas fa-clock"></i> ${statusText}
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Category</span>
+                                    <span class="info-value">${data.category || data.department || 'General'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Priority</span>
+                                    <span class="info-value">${data.priority || 'Normal'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Tracking ID</span>
+                                    <span class="info-value highlight">${data.trackingId || data.code}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Student Information Section -->
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-user-graduate"></i> Student Information
+                            </h2>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">Full Name</span>
+                                    <span class="info-value">${data.fullName || data.studentName || 'Not provided'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Roll Number</span>
+                                    <span class="info-value">${data.rollNo || data.rollNumber || 'Not provided'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Course & Year</span>
+                                    <span class="info-value">${data.course || 'Not provided'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">University Email</span>
+                                    <span class="info-value">${data.uniEmail || data.universityEmail || 'Not provided'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Personal Email</span>
+                                    <span class="info-value">${data.personalEmail || 'Not provided'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Phone Number</span>
+                                    <span class="info-value">${data.phone || data.phoneNumber || 'Not provided'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grievance Details Section -->
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-clipboard-list"></i> Grievance Details
+                            </h2>
+                            
+                            <div class="info-grid" style="margin-bottom: 1.5rem;">
+                                <div class="info-item">
+                                    <span class="info-label">Date of Incident</span>
+                                    <span class="info-value">${formatDate(incidentDate)}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Time of Incident</span>
+                                    <span class="info-value">${incidentTime}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Department/Category</span>
+                                    <span class="info-value">${data.department || data.category || 'General'}</span>
+                                </div>
+                                <div class="info-item" style="grid-column: 1 / -1;">
+                                    <span class="info-label">Location of Incident</span>
+                                    <span class="info-value">${data.location || 'Not specified'}</span>
+                                </div>
+                            </div>
+
+                            <div class="description-box" style="margin-bottom: 1.5rem;">
+                                <span class="label">Involvement Details</span>
+                                <p>${data.involvement || 'Not specified'}</p>
+                            </div>
+
+                            <div class="description-box" style="margin-bottom: 1.5rem;">
+                                <span class="label">Detailed Description</span>
+                                <p>${data.description || data.grievanceDescription || 'No description provided'}</p>
+                            </div>
+
+                            <div class="description-box" style="background: #fef3c7; border-left-color: var(--accent);">
+                                <span class="label">Desired Resolution</span>
+                                <p>${data.resolution || data.desiredResolution || 'No specific resolution requested'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Witness Information (if applicable) -->
+                        ${data.witnesses === 'yes' ? `
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-eye"></i> Witness Information
+                            </h2>
+                            <div class="description-box">
+                                <span class="label">Witness Details</span>
+                                <p>${data.witnessInfo || 'Witness information provided but details not available in summary'}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <!-- Attachments Section -->
+                        ${attachmentsHtml ? `
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-paperclip"></i> Supporting Documents & Evidence
+                            </h2>
+                            <div class="attachments-list">
+                                ${attachmentsHtml}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <!-- Admin Notes Section -->
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-sticky-note"></i> Administrative Notes
+                            </h2>
+                            <div class="description-box" style="background: white; border: 1px dashed var(--border); border-left: 4px solid var(--secondary);">
+                                <p style="color: var(--gray); font-style: italic;">${data.adminNotes || 'No admin notes added yet. Notes will appear here once the case is reviewed.'}</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Document Footer -->
+                    <div class="document-footer">
+                        <p>This is a computer-generated document from Code Flow Digital Grievance Portal.</p>
+                        <p class="timestamp">Generated on: ${new Date().toLocaleString('en-IN')} • Case ID: ${data.code}</p>
+                    </div>
+
+                </div>
+            `;
+        }
+
+        function showNotFound() {
+            const container = document.getElementById('contentContainer');
+            container.innerHTML = `
+                <div class="not-found">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h2>Grievance Not Found</h2>
+                    <p>The grievance code "${grievanceCode || 'Not provided'}" could not be found in our records.</p>
+                    <p style="margin-top: 1rem; font-size: 0.9rem;">Please check the code and try again, or submit a new grievance.</p>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+
+        function generateAttachmentsHtml(attachments) {
+            if (!attachments || attachments.length === 0) {
+                return '';
+            }
+
+            return attachments.map((att, index) => {
+                const iconClass = getAttachmentIconClass(att.type);
+                const fileIcon = getFileIcon(att.type);
+                
+                // For video files, show special preview
+                if (att.type && att.type.includes('video')) {
+                    return `
+                        <div class="attachment-item">
+                            <div class="attachment-info">
+                                <div class="video-preview">
+                                    <img src="https://via.placeholder.com/120x80/1e293b/ffffff?text=Video" alt="Video thumbnail">
+                                    <div class="play-overlay">
+                                        <i class="fas fa-play"></i>
+                                    </div>
+                                    <span class="video-badge">${att.duration || '00:00'}</span>
+                                </div>
+                                <div class="attachment-details">
+                                    <h4>${att.name}</h4>
+                                    <p>Video • ${att.size || 'Unknown size'} • Uploaded on ${att.date || 'recently'}</p>
+                                    ${att.dataUrl ? '<p style="color: var(--accent); font-size: 0.75rem; margin-top: 0.25rem;"><i class="fas fa-check-circle"></i> Ready for download</p>' : ''}
+                                </div>
+                            </div>
+                            <div class="attachment-actions">
+                                ${att.dataUrl ? `
+                                    <a href="${att.dataUrl}" target="_blank" class="btn btn-outline btn-sm">
+                                        <i class="fas fa-play"></i> Watch
+                                    </a>
+                                    <a href="${att.dataUrl}" download="${att.name}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                ` : `
+                                    <button class="btn btn-outline btn-sm" onclick="previewFile('video', '${att.name}')">
+                                        <i class="fas fa-play"></i> Watch
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="downloadFile('${att.name}')">
+                                        <i class="fas fa-download"></i> Download
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="attachment-item">
+                        <div class="attachment-info">
+                            <div class="attachment-icon ${iconClass}">
+                                <i class="fas ${fileIcon}"></i>
+                            </div>
+                            <div class="attachment-details">
+                                <h4>${att.name}</h4>
+                                <p>${getFileTypeLabel(att.type)} • ${att.size || 'Unknown size'} • Uploaded on ${att.date || 'recently'}</p>
+                            </div>
+                        </div>
+                        <div class="attachment-actions">
+                            <button class="btn btn-outline btn-sm" onclick="previewFile('${att.type}', '${att.name}')">
+                                <i class="fas fa-eye"></i> ${att.type && att.type.includes('pdf') ? 'View' : 'Preview'}
+                            </button>
+                            ${att.dataUrl ? `
+                                <a href="${att.dataUrl}" download="${att.name}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            ` : `
+                                <button class="btn btn-primary btn-sm" onclick="downloadFile('${att.name}')">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getAttachmentIconClass(mimeType) {
+            if (!mimeType) return 'document';
+            if (mimeType.includes('image')) return 'image';
+            if (mimeType.includes('pdf')) return 'pdf';
+            if (mimeType.includes('video')) return 'video';
+            return 'document';
+        }
+
+        function getFileIcon(mimeType) {
+            if (!mimeType) return 'fa-file';
+            if (mimeType.includes('image')) return 'fa-image';
+            if (mimeType.includes('pdf')) return 'fa-file-pdf';
+            if (mimeType.includes('video')) return 'fa-video';
+            if (mimeType.includes('word') || mimeType.includes('document')) return 'fa-file-word';
+            if (mimeType.includes('excel') || mimeType.includes('sheet')) return 'fa-file-excel';
+            return 'fa-file';
+        }
+
+        function getFileTypeLabel(mimeType) {
+            if (!mimeType) return 'Document';
+            if (mimeType.includes('image')) return 'Image';
+            if (mimeType.includes('pdf')) return 'PDF Document';
+            if (mimeType.includes('video')) return 'Video';
+            if (mimeType.includes('word')) return 'Word Document';
+            if (mimeType.includes('excel')) return 'Excel Sheet';
+            return 'Document';
+        }
+
+        function getStatusClass(status) {
+            const statusMap = {
+                'pending': 'status-pending',
+                'processing': 'status-processing',
+                'under review': 'status-review',
+                'review': 'status-review',
+                'solved': 'status-solved',
+                'resolved': 'status-solved',
+                'rejected': 'status-rejected'
+            };
+            return statusMap[status?.toLowerCase()] || 'status-pending';
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'Pending Review',
+                'processing': 'Processing',
+                'under review': 'Under Review',
+                'review': 'Under Review',
+                'solved': 'Solved',
+                'resolved': 'Resolved',
+                'rejected': 'Rejected'
+            };
+            return statusMap[status?.toLowerCase()] || 'Pending Review';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString || dateString === 'Not specified') return 'Not specified';
+            
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return dateString;
+                
+                return date.toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        // ============================================
+        // ACTION FUNCTIONS
+        // ============================================
+
+        function goBack() {
+            // Try to determine where to go back
+            if (document.referrer) {
+                window.history.back();
+            } else {
+                window.location.href = 'user_checkstatus.html';
+            }
+        }
+
+        function downloadPDF() {
+            // In production, use jsPDF or server-side PDF generation
+            window.print();
+            
+            setTimeout(() => {
+                alert('PDF Report Generated!\n\nNote: In production, this generates a complete PDF with:\n- All case details\n- Embedded image attachments\n- Video links as QR codes\n- Digital signature and timestamp');
+            }, 500);
+        }
+
+        function previewFile(type, filename) {
+            if (type.includes('image')) {
+                alert(`Opening image preview for: ${filename}\n\nIn production: Opens lightbox with full image`);
+            } else if (type.includes('pdf')) {
+                alert(`Opening PDF viewer for: ${filename}\n\nIn production: Opens embedded PDF viewer`);
+            } else if (type.includes('video')) {
+                alert(`Opening video player for: ${filename}\n\nIn production: Opens video streaming player`);
+            } else {
+                alert(`Previewing: ${filename}\n\nIn production: Opens appropriate viewer`);
+            }
+        }
+
+        function downloadFile(filename) {
+            alert(`Downloading: ${filename}\n\nIn production: Downloads actual file from server`);
+        }
+
+        // ============================================
+        // DEBUGGING HELPERS
+        // ============================================
+
+        // Expose function to check stored data (for debugging)
+        window.debugGrievanceData = function() {
+            console.log('All Grievances:', getAllGrievances());
+            console.log('Recent Grievance:', getRecentGrievance());
+            console.log('Current URL Code:', grievanceCode);
+        };
+    </script>
+
+</body>
+</html>

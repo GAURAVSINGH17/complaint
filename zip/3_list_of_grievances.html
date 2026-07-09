@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Grievances - Code Flow Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-lighter: #dbeafe;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f97316;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #f1f5f9;
+            --white: #ffffff;
+            --icon-bar-width: 70px;
+            --panel-width: 280px;
+            --navbar-height: 70px;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* ============================================
+           TOP NAVBAR - FROM aa.html
+        ============================================ */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .nav-brand-text {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        /* Search Bar - CENTER */
+        .nav-center {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: var(--white);
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-btn {
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .nav-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn-accent {
+            background: linear-gradient(135deg, var(--accent), var(--warning));
+            color: white;
+        }
+
+        .nav-btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4);
+        }
+
+        /* ============================================
+           SIDEBAR - FROM aa.html (Icon + Expandable Panel)
+        ============================================ */
+        .sidebar-wrapper {
+            position: fixed;
+            left: 0;
+            top: var(--navbar-height);
+            bottom: 0;
+            z-index: 900;
+            display: flex;
+        }
+
+        /* Icon Bar */
+        .icon-sidebar {
+            width: var(--icon-bar-width);
+            background: var(--white);
+            border-right: 1px solid var(--light-gray);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem 0;
+            z-index: 901;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .icon-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0 0.75rem;
+        }
+
+        .icon-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: var(--gray);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+            border: none;
+            background: transparent;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary-lighter);
+            color: var(--primary);
+        }
+
+        .icon-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .icon-btn.active::before {
+            content: '';
+            position: absolute;
+            left: -0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 0 3px 3px 0;
+        }
+
+        /* Toggle Button - AT TOP with SQUARE ICON */
+        .toggle-expand {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .toggle-expand:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .toggle-expand i {
+            font-size: 1.1rem;
+        }
+
+        /* Tooltip */
+        .icon-btn::after {
+            content: attr(data-label);
+            position: absolute;
+            left: 60px;
+            background: var(--dark);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .icon-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        /* ============================================
+           EXPANDABLE PANEL - FROM aa.html
+        ============================================ */
+        .expandable-panel {
+            width: var(--panel-width);
+            background: var(--white);
+            border-right: 1px solid var(--light-gray);
+            height: calc(100vh - var(--navbar-height));
+            overflow-y: auto;
+            padding: 1.5rem;
+            transform: translateX(-100%);
+            transition: var(--transition);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+            z-index: 900;
+            position: absolute;
+            left: var(--icon-bar-width);
+            top: 0;
+        }
+
+        .expandable-panel.open {
+            transform: translateX(0);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .close-panel {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: var(--light-gray);
+            color: var(--gray);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-panel:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* User Card */
+        .user-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            box-shadow: 0 10px 25px rgba(30, 64, 175, 0.2);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin: 0 auto 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        /* Navigation Sections */
+        .nav-section {
+            margin-bottom: 1.25rem;
+        }
+
+        .section-title {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .section-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(14, 165, 233, 0.1));
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .menu-icon {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Sign Out */
+        .signout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #dc2626;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-top: 0.5rem;
+        }
+
+        .signout-btn:hover {
+            background: linear-gradient(135deg, #fecaca, #fca5a5);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           MAIN CONTENT - FROM 3_list_of_grievances.html
+        ============================================ */
+        .main-content {
+            margin-left: var(--icon-bar-width);
+            margin-top: var(--navbar-height);
+            padding: 2rem;
+            min-height: calc(100vh - var(--navbar-height));
+            transition: var(--transition);
+        }
+
+        .main-content.panel-open {
+            margin-left: calc(var(--icon-bar-width) + var(--panel-width));
+        }
+
+        /* Overlay */
+        .panel-overlay {
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 800;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .panel-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+            transform: translateX(-3px);
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.875rem;
+            font-weight: 800;
+            color: var(--dark);
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            color: var(--gray);
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--light-gray);
+        }
+
+        th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: rgba(241, 245, 249, 0.5);
+            cursor: pointer;
+        }
+
+        .grievance-code {
+            font-weight: 700;
+            color: var(--primary);
+            font-family: monospace;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-review, .status-reviewed {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-processing {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-solved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: var(--success);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 1024px) {
+            .nav-center {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .icon-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .icon-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .main-content.panel-open {
+                margin-left: 0;
+            }
+
+            .expandable-panel {
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 902;
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+
+            .nav-brand-text {
+                display: none;
+            }
+
+            .nav-btn span {
+                display: none;
+            }
+
+            .nav-btn {
+                padding: 0.625rem;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 0.75rem;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--light-gray);
+            border: none;
+            color: var(--dark);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            margin-right: 0.75rem;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="panel-overlay" id="panelOverlay" onclick="togglePanel()"></div>
+
+    <!-- TOP NAVBAR - FROM aa.html -->
+    <nav class="top-navbar">
+        <div class="nav-left">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="1_main_dashboard_pro.html" class="nav-brand">
+                <div class="nav-logo">
+                    <i class="fas fa-code-branch"></i>
+                </div>
+                <span class="nav-brand-text">CODE FLOW</span>
+            </a>
+        </div>
+
+        <!-- SEARCH BAR - CENTER -->
+        <div class="nav-center">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-box" placeholder="Search grievances, users, or modules...">
+            </div>
+        </div>
+
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="location.href='AdminDashboard.html'">
+                <i class="fas fa-home"></i> <span>Home</span>
+            </button>
+            <button class="nav-btn">
+                <i class="fas fa-bell"></i> <span>Notifications</span>
+                <span style="background: var(--danger); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 4px;">3</span>
+            </button>
+            <button class="nav-btn nav-btn-accent">
+                <i class="fas fa-headset"></i> <span>Support</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- SIDEBAR WRAPPER - FROM aa.html -->
+    <div class="sidebar-wrapper">
+        <!-- Icon Sidebar -->
+        <aside class="icon-sidebar" id="iconSidebar">
+            <nav class="icon-nav">
+                <!-- Toggle Button - AT TOP with SQUARE ICON -->
+                <button class="icon-btn toggle-expand active" onclick="togglePanel()" data-label="Expand Menu" id="toggleBtn">
+                    <i class="fas fa-table-columns" id="toggleIcon"></i>
+                </button>
+
+                <!-- Menu Icons - Admin Links -->
+                <a href="AdminDashboard.html" class="icon-btn" data-label="Dashboard">
+                    <i class="fas fa-th-large"></i>
+                </a>
+                <a href="2_all_grievances.html" class="icon-btn active" data-label="All Grievance">
+                    <i class="fas fa-clipboard-list"></i>
+                </a>
+                <a href="insights&dashoboards.html" class="icon-btn" data-label="Insights & Dashboard">
+                    <i class="fas fa-chart-pie"></i>
+                </a>
+                <a href="check_status.html" class="icon-btn" data-label="Check Status">
+                    <i class="fas fa-tasks"></i>
+                </a>
+                <a href="mail.html" class="icon-btn" data-label="Mail">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="Guidelines.html" class="icon-btn" data-label="Guidelines">
+                    <i class="fas fa-book"></i>
+                </a>
+                <a href="notice_board.html" class="icon-btn" data-label="Notice Board">
+                    <i class="fas fa-bullhorn"></i>
+                </a>
+                <a href="edit_profile.html" class="icon-btn" data-label="Edit Profile">
+                    <i class="fas fa-user-cog"></i>
+                </a>
+                <a href="Account_Activity.html" class="icon-btn " data-label="Account Activity">
+                    <i class="fas fa-history"></i>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Expandable Panel - Admin Menu -->
+        <div class="expandable-panel" id="expandablePanel">
+
+            <div class="user-card">
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="user-name">Administrator</div>
+                <div class="user-role">Super Admin</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Main Menu</div>
+                <nav class="section-menu">
+                    <a href="AdminDashboard.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-th-large"></i></span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="2_all_grievances.html" class="menu-item active">
+                        <span class="menu-icon"><i class="fas fa-clipboard-list"></i></span>
+                        <span>All Grievance</span>
+                    </a>
+                    <a href="insights&dashoboards.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-chart-pie"></i></span>
+                        <span>Insights & Dashboard</span>
+                    </a>
+                    <a href="check_status.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-tasks"></i></span>
+                        <span>Check Status</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Communication</div>
+                <nav class="section-menu">
+                    <a href="mail.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-envelope"></i></span>
+                        <span>Mail</span>
+                    </a>
+                    <a href="Guidelines.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-book"></i></span>
+                        <span>Guidelines for Students</span>
+                    </a>
+                    <a href="notice_board.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-bullhorn"></i></span>
+                        <span>Notice Board</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Settings</div>
+                <nav class="section-menu">
+                    <a href="edit_profile.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-user-cog"></i></span>
+                        <span>Edit Profile</span>
+                    </a>
+                    <a href="account_activity.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-history"></i></span>
+                        <span>Account Activity</span>
+                    </a>
+                </nav>
+            </div>
+
+            <button class="signout-btn" onclick="location.href='login.html'">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sign Out</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT - FROM 3_list_of_grievances.html (UNCHANGED) -->
+    <main class="main-content" id="mainContent">
+        <!-- Back Button -->
+        <a href="2_all_grievances.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Categories
+        </a>
+
+        <div class="page-header">
+            <h1 class="page-title" id="pageTitle">Loading...</h1>
+            <p class="page-subtitle" id="pageSubtitle">Loading category details...</p>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h3 class="table-title" id="tableTitle">Category Grievances</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Grievance Code</th>
+                        <th>Date of Receipt</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="grievanceTableBody">
+                    <!-- Grievances will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        // ============================================
+        // PANEL TOGGLE SCRIPT - FROM aa.html
+        // ============================================
+        const expandablePanel = document.getElementById('expandablePanel');
+        const mainContent = document.getElementById('mainContent');
+        const panelOverlay = document.getElementById('panelOverlay');
+        const iconSidebar = document.getElementById('iconSidebar');
+
+        function togglePanel() {
+            expandablePanel.classList.toggle('open');
+
+            if (window.innerWidth > 768) {
+                mainContent.classList.toggle('panel-open');
+            } else {
+                panelOverlay.classList.toggle('active');
+            }
+        }
+
+        function toggleMobileSidebar() {
+            iconSidebar.classList.toggle('mobile-open');
+            panelOverlay.classList.toggle('active');
+        }
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768 && expandablePanel.classList.contains('open')) {
+                    togglePanel();
+                }
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                panelOverlay.classList.remove('active');
+                iconSidebar.classList.remove('mobile-open');
+
+                if (expandablePanel.classList.contains('open')) {
+                    mainContent.classList.add('panel-open');
+                } else {
+                    mainContent.classList.remove('panel-open');
+                }
+            } else {
+                mainContent.classList.remove('panel-open');
+                if (expandablePanel.classList.contains('open')) {
+                    panelOverlay.classList.add('active');
+                }
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'm' || e.key === 'M') {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    togglePanel();
+                }
+            }
+        });
+
+        // ============================================
+        // DATA MANAGEMENT SYSTEM (FROM 3_list_of_grievances.html)
+        // ============================================
+
+        // Initialize data if not exists
+        function initializeData() {
+            if (!localStorage.getItem('grievanceDatabase')) {
+                // Create comprehensive sample data matching detailed page expectations
+                const sampleData = {
+                    'Academic': [
+                        { 
+                            code: 'ACD001xyz@12', 
+                            subject: 'Exam Schedule Conflict',
+                            description: 'The final exam schedule conflicts with my part-time work commitments. I request a reschedule for the Database Management exam.',
+                            fullName: 'Rahul Sharma', 
+                            uniEmail: 'rahul.sharma@codeflow.edu', 
+                            course: 'B.Tech Computer Science', 
+                            rollNumber: 'CS2024001', 
+                            phone: '9876543210',
+                            department: 'Academic',
+                            submissionDate: '2025-01-10', 
+                            status: 'pending',
+                            priority: 'High',
+                            history: [{ date: '2025-01-10', status: 'Submitted', message: 'Grievance received' }]
+                        },
+                        { 
+                            code: 'ACD002abc@34', 
+                            subject: 'Course Material Access',
+                            description: 'Unable to access online course materials for Machine Learning module. Login credentials showing expired.',
+                            fullName: 'Priya Patel', 
+                            uniEmail: 'priya.patel@codeflow.edu', 
+                            course: 'B.Tech AI & DS', 
+                            rollNumber: 'AI2024034', 
+                            phone: '9876543211',
+                            department: 'Academic',
+                            submissionDate: '2025-01-12', 
+                            status: 'processing',
+                            priority: 'Normal',
+                            history: [
+                                { date: '2025-01-12', status: 'Submitted', message: 'Grievance received' },
+                                { date: '2025-01-13', status: 'Processing', message: 'IT team assigned' }
+                            ]
+                        }
+                    ],
+                    'Administrative': [
+                        { 
+                            code: 'ADM001pqr@12', 
+                            subject: 'ID Card Replacement',
+                            description: 'Lost my student ID card during sports event. Need replacement urgently for library access.',
+                            fullName: 'Amit Kumar', 
+                            uniEmail: 'amit.kumar@codeflow.edu', 
+                            course: 'BBA', 
+                            rollNumber: 'BA2024056', 
+                            phone: '9876543220',
+                            department: 'Administrative',
+                            submissionDate: '2025-01-11', 
+                            status: 'pending',
+                            priority: 'Normal',
+                            history: [{ date: '2025-01-11', status: 'Submitted', message: 'Grievance received' }]
+                        },
+                        { 
+                            code: 'ADM002lmn@34', 
+                            subject: 'Certificate Request',
+                            description: 'Applied for bonafide certificate 2 weeks ago but no update received yet.',
+                            fullName: 'Sneha Gupta', 
+                            uniEmail: 'sneha.gupta@codeflow.edu', 
+                            course: 'BCA', 
+                            rollNumber: 'CA2024078', 
+                            phone: '9876543221',
+                            department: 'Administrative',
+                            submissionDate: '2025-01-13', 
+                            status: 'reviewed',
+                            priority: 'Normal',
+                            history: [
+                                { date: '2025-01-13', status: 'Submitted', message: 'Grievance received' },
+                                { date: '2025-01-15', status: 'Reviewed', message: 'Documents verified' }
+                            ]
+                        }
+                    ],
+                    'Examination & Evaluations': [
+                        { 
+                            code: 'EXM001rst@12', 
+                            subject: 'Re-evaluation Request',
+                            description: 'Applied for re-evaluation of Data Structures paper but fee payment portal showing error.',
+                            fullName: 'Vikram Rao', 
+                            uniEmail: 'vikram.rao@codeflow.edu', 
+                            course: 'B.Tech', 
+                            rollNumber: 'CS2024091', 
+                            phone: '9876543230',
+                            department: 'Examination',
+                            submissionDate: '2025-01-09', 
+                            status: 'processing',
+                            priority: 'High',
+                            history: [{ date: '2025-01-09', status: 'Submitted', message: 'Grievance received' }]
+                        },
+                        { 
+                            code: 'EXM002uvw@34', 
+                            subject: 'Grade Discrepancy',
+                            description: 'My grade in web development shows C but I calculated based on marks it should be B.',
+                            fullName: 'Neha Singh', 
+                            uniEmail: 'neha.singh@codeflow.edu', 
+                            course: 'MCA', 
+                            rollNumber: 'MC2024123', 
+                            phone: '9876543231',
+                            department: 'Examination',
+                            submissionDate: '2025-01-14', 
+                            status: 'pending',
+                            priority: 'High',
+                            history: [{ date: '2025-01-14', status: 'Submitted', message: 'Grievance received' }]
+                        }
+                    ],
+                    'IT & Digital service': [
+                        { 
+                            code: 'ITD001ghi@12', 
+                            subject: 'Wi-Fi Connectivity Issues',
+                            description: 'Unable to connect to campus Wi-Fi in Hostel Block C for past 3 days. Credentials not working.',
+                            fullName: 'Arun Kumar', 
+                            uniEmail: 'arun.kumar@codeflow.edu', 
+                            course: 'B.Tech', 
+                            rollNumber: 'CS2024105', 
+                            phone: '9876543240',
+                            department: 'IT Services',
+                            submissionDate: '2025-01-10', 
+                            status: 'solved',
+                            priority: 'High',
+                            history: [
+                                { date: '2025-01-10', status: 'Submitted', message: 'Grievance received' },
+                                { date: '2025-01-11', status: 'Processing', message: 'IT team assigned' },
+                                { date: '2025-01-12', status: 'Solved', message: 'Password reset completed' }
+                            ]
+                        },
+                        { 
+                            code: 'ITD002jkl@34', 
+                            subject: 'Portal Login Issue',
+                            description: 'Student portal showing 404 error when trying to access grade history.',
+                            fullName: 'Divya Menon', 
+                            uniEmail: 'divya.menon@codeflow.edu', 
+                            course: 'B.Com', 
+                            rollNumber: 'CM2024134', 
+                            phone: '9876543241',
+                            department: 'IT Services',
+                            submissionDate: '2025-01-12', 
+                            status: 'processing',
+                            priority: 'Normal',
+                            history: [{ date: '2025-01-12', status: 'Submitted', message: 'Grievance received' }]
+                        }
+                    ],
+                    'Hostel Facilities': [
+                        { 
+                            code: 'HTL001mno@12', 
+                            subject: 'Room Maintenance',
+                            description: 'AC in room 304 not working properly. Water leakage from ceiling near window.',
+                            fullName: 'Rohit Verma', 
+                            uniEmail: 'rohit.verma@codeflow.edu', 
+                            course: 'B.Tech', 
+                            rollNumber: 'EE2024056', 
+                            phone: '9876543250',
+                            department: 'Hostel',
+                            submissionDate: '2025-01-11', 
+                            status: 'pending',
+                            priority: 'Normal',
+                            history: [{ date: '2025-01-11', status: 'Submitted', message: 'Grievance received' }]
+                        },
+                        { 
+                            code: 'HTL002pqr@34', 
+                            subject: 'Mess Food Quality',
+                            description: 'Repeated instances of stale food being served in mess. Hygiene concerns.',
+                            fullName: 'Ananya Reddy', 
+                            uniEmail: 'ananya.reddy@codeflow.edu', 
+                            course: 'MBA', 
+                            rollNumber: 'MB2024167', 
+                            phone: '9876543251',
+                            department: 'Hostel',
+                            submissionDate: '2025-01-13', 
+                            status: 'reviewed',
+                            priority: 'High',
+                            history: [
+                                { date: '2025-01-13', status: 'Submitted', message: 'Grievance received' },
+                                { date: '2025-01-14', status: 'Reviewed', message: 'Mess committee alerted' }
+                            ]
+                        }
+                    ],
+                    'Library service': [
+                        { 
+                            code: 'LIB001stu@12', 
+                            subject: 'Book Availability',
+                            description: 'Book "Clean Code" showing available in system but not found on shelf. Please check.',
+                            fullName: 'Karan Malhotra', 
+                            uniEmail: 'karan.malhotra@codeflow.edu', 
+                            course: 'B.Tech', 
+                            rollNumber: 'CS2024078', 
+                            phone: '9876543260',
+                            department: 'Library',
+                            submissionDate: '2025-01-10', 
+                            status: 'solved',
+                            priority: 'Normal',
+                            history: [
+                                { date: '2025-01-10', status: 'Submitted', message: 'Grievance received' },
+                                { date: '2025-01-11', status: 'Solved', message: 'Book located and reserved' }
+                            ]
+                        },
+                        { 
+                            code: 'LIB002vwx@34', 
+                            subject: 'Study Room Booking',
+                            description: 'Online study room booking system not working. Shows already booked but rooms are empty.',
+                            fullName: 'Meera Joshi', 
+                            uniEmail: 'meera.joshi@codeflow.edu', 
+                            course: 'M.Tech', 
+                            rollNumber: 'MT2024189', 
+                            phone: '9876543261',
+                            department: 'Library',
+                            submissionDate: '2025-01-12', 
+                            status: 'processing',
+                            priority: 'Normal',
+                            history: [{ date: '2025-01-12', status: 'Submitted', message: 'Grievance received' }]
+                        }
+                    ],
+                    'Transport & Community': [
+                        { 
+                            code: '12345abcd@12', 
+                            subject: 'Bus Route Timing',
+                            description: 'Evening bus at 5:30 PM always arrives late by 20-30 minutes. Affecting part-time job schedule.',
+                            fullName: 'Suresh Babu', 
+                            uniEmail: 'suresh.babu@codeflow.edu', 
+                            course: 'BCA', 
+                            rollNumber: 'CA2024034', 
+                            phone: '9876543270',
+                            department: 'Transport',
+                            submissionDate: '2025-01-10', 
+                            status: 'pending',
+                            priority: 'Normal',
+                            history: [{ date: '2025-01-10', status: 'Submitted', message: 'Grievance received' }]
+                        },
+                        { 
+                            code: '67890efgh@34', 
+                            subject: 'Bus Pass Renewal',
+                            description: 'Applied for monthly bus pass renewal but new card not issued yet. Old card expired yesterday.',
+                            fullName: 'Lakshmi Priya', 
+                            uniEmail: 'lakshmi.priya@codeflow.edu', 
+                            course: 'B.Sc', 
+                            rollNumber: 'SC2024056', 
+                            phone: '9876543271',
+                            department: 'Transport',
+                            submissionDate: '2025-01-12', 
+                            status: 'processing',
+                            priority: 'High',
+                            history: [{ date: '2025-01-12', status: 'Submitted', message: 'Grievance received' }]
+                        }
+                    ],
+                    'Placement & Career': [
+                        { 
+                            code: 'PLC001yz@12', 
+                            subject: 'Internship Certificate',
+                            description: 'Completed internship 2 months ago but completion certificate not issued yet by TPO office.',
+                            fullName: 'Aditya Nair', 
+                            uniEmail: 'aditya.nair@codeflow.edu', 
+                            course: 'B.Tech', 
+                            rollNumber: 'CS2024098', 
+                            phone: '9876543280',
+                            department: 'Placement',
+                            submissionDate: '2025-01-11', 
+                            status: 'reviewed',
+                            priority: 'Normal',
+                            history: [
+                                { date: '2025-01-11', status: 'Submitted', message: 'Grievance received' },
+                                { date: '2025-01-13', status: 'Reviewed', message: 'Company verification pending' }
+                            ]
+                        },
+                        { 
+                            code: 'PLC002ab@34', 
+                            subject: 'Campus Drive Access',
+                            description: 'Not receiving emails for campus placement drives despite registering. Email filter issue suspected.',
+                            fullName: 'Pooja Desai', 
+                            uniEmail: 'pooja.desai@codeflow.edu', 
+                            course: 'MBA', 
+                            rollNumber: 'MB2024112', 
+                            phone: '9876543281',
+                            department: 'Placement',
+                            submissionDate: '2025-01-13', 
+                            status: 'solved',
+                            priority: 'High',
+                            history: [
+                                { date: '2025-01-13', status: 'Submitted', message: 'Grievance received' },
+                                { date: '2025-01-14', status: 'Solved', message: 'Email whitelist updated' }
+                            ]
+                        }
+                    ],
+                    'Registrar office': [
+                        { 
+                            code: 'REG001cd@12', 
+                            subject: 'Transcript Request',
+                            description: 'Need official transcript for higher studies application abroad. Applied 3 weeks ago.',
+                            fullName: 'Ramesh Iyer', 
+                            uniEmail: 'ramesh.iyer@codeflow.edu', 
+                            course: 'B.E.', 
+                            rollNumber: 'BE2024023', 
+                            phone: '9876543290',
+                            department: 'Registrar',
+                            submissionDate: '2025-01-10', 
+                            status: 'processing',
+                            priority: 'High',
+                            history: [{ date: '2025-01-10', status: 'Submitted', message: 'Grievance received' }]
+                        },
+                        { 
+                            code: 'REG002ef@34', 
+                            subject: 'Document Attestation',
+                            description: 'Need degree certificate attested for visa purposes. Urgent appointment requested.',
+                            fullName: 'Fatima Khan', 
+                            uniEmail: 'fatima.khan@codeflow.edu', 
+                            course: 'B.Arch', 
+                            rollNumber: 'AR2024045', 
+                            phone: '9876543291',
+                            department: 'Registrar',
+                            submissionDate: '2025-01-12', 
+                            status: 'pending',
+                            priority: 'High',
+                            history: [{ date: '2025-01-12', status: 'Submitted', message: 'Grievance received' }]
+                        }
+                    ],
+                    'Financial & others': [
+                        { 
+                            code: 'FIN001gh@12', 
+                            subject: 'Scholarship Disbursement',
+                            description: 'Merit scholarship for previous semester not credited to account yet.',
+                            fullName: 'Ganesh Joshi', 
+                            uniEmail: 'ganesh.joshi@codeflow.edu', 
+                            course: 'B.Tech', 
+                            rollNumber: 'ME2024067', 
+                            phone: '9876543300',
+                            department: 'Finance',
+                            submissionDate: '2025-01-09', 
+                            status: 'reviewed',
+                            priority: 'Normal',
+                            history: [
+                                { date: '2025-01-09', status: 'Submitted', message: 'Grievance received' },
+                                { date: '2025-01-11', status: 'Reviewed', message: 'Accounts department checking' }
+                            ]
+                        },
+                        { 
+                            code: 'FIN002ij@34', 
+                            subject: 'Fee Receipt Correction',
+                            description: 'Name spelled incorrectly in fee receipt. Need corrected version for loan purposes.',
+                            fullName: 'Harini S', 
+                            uniEmail: 'harini.s@codeflow.edu', 
+                            course: 'B.Sc', 
+                            rollNumber: 'SC2024089', 
+                            phone: '9876543301',
+                            department: 'Finance',
+                            submissionDate: '2025-01-14', 
+                            status: 'solved',
+                            priority: 'Normal',
+                            history: [
+                                { date: '2025-01-14', status: 'Submitted', message: 'Grievance received' },
+                                { date: '2025-01-15', status: 'Solved', message: 'New receipt issued' }
+                            ]
+                        }
+                    ],
+                    'Ragging': [
+                        { 
+                            code: 'RAG001kl@12', 
+                            subject: 'Anonymous Complaint - Ragging',
+                            description: 'Senior students demanding money from juniors in Hostel Block A. Occurring after 10 PM.',
+                            fullName: 'Anonymous', 
+                            uniEmail: 'anonymous@system.local', 
+                            course: 'Hidden', 
+                            rollNumber: 'ANON001', 
+                            phone: 'Hidden',
+                            department: 'Ragging',
+                            submissionDate: '2025-01-10', 
+                            status: 'processing',
+                            priority: 'High',
+                            isAnonymous: true,
+                            history: [{ date: '2025-01-10', status: 'Submitted', message: 'Anonymous complaint received' }]
+                        },
+                        { 
+                            code: 'RAG002mn@34', 
+                            subject: 'Verbal Harassment by Seniors',
+                            description: 'Continuous name-calling and verbal abuse by final year students in cafeteria.',
+                            fullName: 'Anonymous', 
+                            uniEmail: 'anonymous@system.local', 
+                            course: 'Hidden', 
+                            rollNumber: 'ANON002', 
+                            phone: 'Hidden',
+                            department: 'Ragging',
+                            submissionDate: '2025-01-12', 
+                            status: 'reviewed',
+                            priority: 'High',
+                            isAnonymous: true,
+                            history: [
+                                { date: '2025-01-12', status: 'Submitted', message: 'Anonymous complaint received' },
+                                { date: '2025-01-13', status: 'Reviewed', message: 'Anti-ragging cell notified' }
+                            ]
+                        }
+                    ],
+                    'Harassment': [
+                        { 
+                            code: 'HAR001op@12', 
+                            subject: 'Workplace Harassment Complaint',
+                            description: 'Inappropriate behavior by staff member in admin office. Need immediate action.',
+                            fullName: 'Anonymous', 
+                            uniEmail: 'anonymous@system.local', 
+                            course: 'Hidden', 
+                            rollNumber: 'ANON003', 
+                            phone: 'Hidden',
+                            department: 'Harassment',
+                            submissionDate: '2025-01-11', 
+                            status: 'pending',
+                            priority: 'High',
+                            isAnonymous: true,
+                            history: [{ date: '2025-01-11', status: 'Submitted', message: 'Complaint received' }]
+                        },
+                        { 
+                            code: 'HAR002qr@34', 
+                            subject: 'Discrimination Allegation',
+                            description: 'Preferential treatment in lab groups based on regional language bias.',
+                            fullName: 'Sonia Mathew', 
+                            uniEmail: 'sonia.mathew@codeflow.edu', 
+                            course: 'M.Tech', 
+                            rollNumber: 'MT2024123', 
+                            phone: '9876543311',
+                            department: 'Harassment',
+                            submissionDate: '2025-01-13', 
+                            status: 'processing',
+                            priority: 'High',
+                            history: [{ date: '2025-01-13', status: 'Submitted', message: 'Grievance received' }]
+                        }
+                    ]
+                };
+                localStorage.setItem('grievanceDatabase', JSON.stringify(sampleData));
+            }
+
+            // Initialize anonymous database if not exists
+            if (!localStorage.getItem('anonymousGrievanceDatabase')) {
+                localStorage.setItem('anonymousGrievanceDatabase', JSON.stringify([]));
+            }
+        }
+
+        // Get category from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category') || 'Transport & Community';
+
+        // Initialize data on load
+        initializeData();
+
+        // Load data from localStorage
+        function loadCategoryData(categoryName) {
+            const db = JSON.parse(localStorage.getItem('grievanceDatabase') || '{}');
+            const grievances = db[categoryName] || [];
+
+            return {
+                count: grievances.length,
+                grievances: grievances.map(g => ({
+                    code: g.code,
+                    date: formatDate(g.submissionDate),
+                    rawDate: g.submissionDate,
+                    status: capitalizeFirst(g.status || 'pending'),
+                    statusClass: 'status-' + (g.status || 'pending'),
+                    rawStatus: g.status || 'pending',
+                    fullData: g // Keep reference for detail page
+                }))
+            };
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-GB', { 
+                day: '2-digit', month: 'short', year: 'numeric' 
+            });
+        }
+
+        function capitalizeFirst(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Get data for current category
+        const currentData = loadCategoryData(category);
+
+        // Update page titles
+        document.getElementById('pageTitle').textContent = category + ' Grievances (' + currentData.count + ')';
+        document.getElementById('pageSubtitle').textContent = 'Showing all grievances in ' + category + ' category';
+        document.getElementById('tableTitle').textContent = category + ' Grievances';
+
+        // Populate table
+        const tableBody = document.getElementById('grievanceTableBody');
+
+        if (currentData.grievances.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 3rem; color: var(--gray);">
+                        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                        No grievances found in this category
+                    </td>
+                </tr>
+            `;
+        } else {
+            currentData.grievances.forEach((grievance, index) => {
+                const row = document.createElement('tr');
+
+                // FIXED: Use 'code' parameter instead of 'id' for consistency with detail page
+                const detailUrl = 'Grievance_detailed.html?code=' + encodeURIComponent(grievance.code);
+
+                row.onclick = function() {
+                    window.location.href = detailUrl;
+                };
+
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="grievance-code">${grievance.code}</td>
+                    <td>${grievance.date}</td>
+                    <td><span class="status-badge ${grievance.statusClass}"><i class="fas fa-circle" style="font-size: 6px;"></i> ${grievance.status}</span></td>
+                    <td><button class="download-btn" onclick="event.stopPropagation(); downloadGrievance('${grievance.code}')"><i class="fas fa-download"></i> Download</button></td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        function downloadGrievance(code) {
+            // In a real app, this would download a PDF
+            // For now, we'll show an alert
+            alert('Downloading grievance report: ' + code + '\n\nIn production, this would download a PDF.');
+        }
+    </script>
+</body>
+</html>

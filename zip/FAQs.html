@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQs - Code Flow Digital Grievance Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #0d9488;
+            --accent: #f97316;
+            --accent-hover: #ea580c;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .page-hero {
+            margin-top: 80px;
+            padding: 5rem 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .page-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .page-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            color: white;
+        }
+
+        .page-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .page-hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 80px;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .search-wrapper-large {
+            position: relative;
+        }
+
+        .search-input-large {
+            width: 100%;
+            padding: 1.25rem 3rem 1.25rem 4rem;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--bg);
+        }
+
+        .search-input-large:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background: white;
+        }
+
+        .search-icon-large {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 1.25rem;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 0.5rem;
+            display: none;
+        }
+
+        .search-clear.visible {
+            display: block;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 4rem 0;
+            background: var(--bg);
+            min-height: 60vh;
+        }
+
+        .faq-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .category-tab {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-tab:hover {
+            border-color: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .category-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: transparent;
+            box-shadow: var(--shadow);
+        }
+
+        .category-tab .count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        /* FAQ Grid */
+        .faq-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            box-shadow: var(--shadow);
+            border-color: var(--primary-lighter);
+        }
+
+        .faq-item.active {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.02), rgba(13, 148, 136, 0.02));
+        }
+
+        .faq-item.active .faq-question {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.05), rgba(13, 148, 136, 0.05));
+        }
+
+        .faq-question-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            padding-right: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .faq-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-lighter), #bfdbfe);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            transform: rotate(180deg);
+        }
+
+        .faq-toggle {
+            width: 32px;
+            height: 32px;
+            background: var(--bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 0 1.5rem 1.5rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .faq-answer-content p {
+            margin-bottom: 1rem;
+        }
+
+        .faq-answer-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .faq-answer-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-answer-content strong {
+            color: var(--text-primary);
+        }
+
+        .faq-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--bg);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            display: none;
+        }
+
+        .no-results.visible {
+            display: block;
+        }
+
+        .no-results-icon {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+            color: var(--gray);
+            box-shadow: var(--shadow);
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .cta-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+            color: white;
+        }
+
+        .cta-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn-primary {
+            background: white;
+            color: var(--primary);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cta-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-btn-secondary {
+            background: transparent;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cta-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0f172a;
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .footer-brand p {
+            color: #94a3b8;
+            margin: 1rem 0;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .footer-column h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            max-width: 1280px;
+            margin: 3rem auto 0;
+            padding: 2rem 2rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .page-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .category-tabs {
+                gap: 0.5rem;
+            }
+
+            .category-tab {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .faq-question-text {
+                font-size: 1rem;
+            }
+
+            .faq-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .faq-item {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .faq-item.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="mainpg.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-code-branch"></i>
+                </div>
+                Code Flow
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="mainpg.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="FAQs.html" class="active">FAQs</a></li>
+                <li><a href="Login.html">Submit Complaint</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <a href="Register.html" class="btn btn-outline">Register</a>
+                <a href="Login.html" class="btn btn-primary">Login</a>
+            </div>
+
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="page-hero">
+        <div class="page-hero-content">
+            <h1>Frequently Asked Questions</h1>
+            <p>Find answers to common questions about filing grievances, tracking status, and using the Code Flow platform</p>
+            <div class="breadcrumb">
+                <a href="mainpg.html">Home</a>
+                <span>/</span>
+                <span>FAQs</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="search-container">
+            <div class="search-wrapper-large">
+                <i class="fas fa-search search-icon-large"></i>
+                <input type="text" class="search-input-large" id="faqSearch" placeholder="Search for answers... (e.g., 'how to track complaint')">
+                <button class="search-clear" id="clearSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="faq-container">
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="all">
+                    <i class="fas fa-border-all"></i> All <span class="count">12</span>
+                </button>
+                <button class="category-tab" data-category="general">
+                    <i class="fas fa-info-circle"></i> General <span class="count">2</span>
+                </button>
+                <button class="category-tab" data-category="account">
+                    <i class="fas fa-user-circle"></i> Account <span class="count">2</span>
+                </button>
+                <button class="category-tab" data-category="submission">
+                    <i class="fas fa-file-alt"></i> Submission <span class="count">3</span>
+                </button>
+                <button class="category-tab" data-category="tracking">
+                    <i class="fas fa-search"></i> Tracking <span class="count">2</span>
+                </button>
+                <button class="category-tab" data-category="resolution">
+                    <i class="fas fa-check-circle"></i> Resolution <span class="count">2</span>
+                </button>
+                <button class="category-tab" data-category="technical">
+                    <i class="fas fa-laptop-code"></i> Technical <span class="count">1</span>
+                </button>
+            </div>
+
+            <!-- FAQ Grid -->
+            <div class="faq-grid" id="faqGrid">
+                <!-- General -->
+                <div class="faq-item" data-category="general">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-question"></i>
+                            </div>
+                            What is Code Flow Digital Grievance Portal?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>Code Flow is a <strong>Digital Complaint and Grievance Analytical System</strong> designed for students to submit, track, and resolve grievances efficiently. It provides a transparent platform where you can:</p>
+                            <ul>
+                                <li>File complaints across multiple categories (Academic, Administrative, Hostel, etc.)</li>
+                                <li>Track real-time status updates</li>
+                                <li>Communicate with administration through the mail system</li>
+                                <li>View insights and analytics on grievance resolution</li>
+                                <li>Access guidelines and important notices</li>
+                            </ul>
+                            <span class="faq-tag">General</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="general">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            Is my complaint data secure and confidential?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Absolutely.</strong> We prioritize your privacy and data security:</p>
+                            <ul>
+                                <li>Bank-grade <strong>256-bit encryption</strong> protects all your data</li>
+                                <li>Only authorized administrators can view your complaint details</li>
+                                <li>Your personal information is never shared with third parties</li>
+                                <li>Sensitive grievances (harassment, ragging) are handled with strict confidentiality</li>
+                                <li>Secure login with session management</li>
+                            </ul>
+                            <span class="faq-tag">General</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account -->
+                <div class="faq-item" data-category="account">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            How do I register on the portal?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>Registration is simple and takes just 2 minutes:</p>
+                            <ul>
+                                <li>Click on <strong>"Register"</strong> in the top navigation</li>
+                                <li>Enter your institutional email address</li>
+                                <li>Create a secure password (min 8 characters with numbers)</li>
+                                <li>Verify your email through the OTP sent to your inbox</li>
+                                <li>Complete your profile with basic details (Name, Roll Number, Department)</li>
+                            </ul>
+                            <p><strong>Note:</strong> You must use your university/institution email (@yourcollege.edu) to register.</p>
+                            <span class="faq-tag">Account</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="account">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            I forgot my password. How can I reset it?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>If you've forgotten your password:</p>
+                            <ul>
+                                <li>Go to the <strong>Login</strong> page</li>
+                                <li>Click on <strong>"Forgot Password?"</strong> below the login form</li>
+                                <li>Enter your registered email address</li>
+                                <li>Check your email for the password reset link (valid for 1 hour)</li>
+                                <li>Create a new strong password</li>
+                            </ul>
+                            <p>If you don't receive the email within 5 minutes, check your spam folder or contact technical support.</p>
+                            <span class="faq-tag">Account</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submission -->
+                <div class="faq-item" data-category="submission">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-file-signature"></i>
+                            </div>
+                            How do I submit a new grievance?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>Submitting a grievance is straightforward:</p>
+                            <ul>
+                                <li>Login to your dashboard and click <strong>"Submit Grievance"</strong></li>
+                                <li>Select the appropriate <strong>Category</strong> (Academic, Hostel, Transport, etc.)</li>
+                                <li>Fill in the subject line with a brief description</li>
+                                <li>Provide detailed information in the description box</li>
+                                <li>Upload supporting documents (images, PDFs) if available</li>
+                                <li>Review and click <strong>Submit</strong></li>
+                            </ul>
+                            <p>You'll immediately receive a <strong>Grievance ID</strong> (e.g., ACD001xyz@12) - save this for tracking!</p>
+                            <span class="faq-tag">Submission</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="submission">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-list-alt"></i>
+                            </div>
+                            What categories of grievances can I file?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>Code Flow supports 12 complaint categories:</p>
+                            <ul>
+                                <li><strong>Academic:</strong> Curriculum, faculty, examinations, grading issues</li>
+                                <li><strong>Hostel Facilities:</strong> Rooms, mess, sanitation, amenities</li>
+                                <li><strong>Transport & Community:</strong> Bus services, commuting issues</li>
+                                <li><strong>IT & Digital Services:</strong> WiFi, portals, software issues</li>
+                                <li><strong>Library Services:</strong> Books, digital resources, facility issues</li>
+                                <li><strong>Administrative:</strong> Admission, documents, general admin</li>
+                                <li><strong>Financial:</strong> Fees, scholarships, payments</li>
+                                <li><strong>Placement & Career:</strong> Internships, recruitment drives</li>
+                                <li><strong>Harassment/Ragging:</strong> Strictly confidential handling</li>
+                                <li>And more specialized categories...</li>
+                            </ul>
+                            <span class="faq-tag">Submission</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="submission">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-paperclip"></i>
+                            </div>
+                            What file types and sizes are supported for attachments?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>You can attach supporting documents with these specifications:</p>
+                            <ul>
+                                <li><strong>Formats:</strong> Images (JPG, PNG, GIF), Documents (PDF, DOC, DOCX), Text files (TXT)</li>
+                                <li><strong>Size Limit:</strong> Maximum 10MB per file</li>
+                                <li><strong>Multiple Files:</strong> You can upload up to 5 files per grievance</li>
+                                <li><strong>Recommended:</strong> Screenshots for technical issues, Bills for financial grievances, Photos for facility issues</li>
+                            </ul>
+                            <p><strong>Tip:</strong> Ensure images are clear and documents are readable before uploading.</p>
+                            <span class="faq-tag">Submission</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tracking -->
+                <div class="faq-item" data-category="tracking">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            How can I track the status of my complaint?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>You can track your grievance in multiple ways:</p>
+                            <ul>
+                                <li><strong>Dashboard:</strong> Login to see all your grievances with current status cards</li>
+                                <li><strong>My Grievances:</strong> View detailed list with category-wise organization</li>
+                                <li><strong>Check Status Tool:</strong> Enter your Grievance ID to get instant updates</li>
+                                <li><strong>Email Notifications:</strong> Receive automatic updates when status changes</li>
+                            </ul>
+                            <p><strong>Status Meanings:</strong>
+                            <br>🟡 <strong>Pending:</strong> Submitted, awaiting review<br>
+                            🔵 <strong>Under Review:</strong> Being examined by relevant department<br>
+                            🟢 <strong>Resolved:</strong> Solution implemented<br>
+                            🔴 <strong>Escalated:</strong> Moved to higher authorities</p>
+                            <span class="faq-tag">Tracking</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="tracking">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            How long does it take to resolve a grievance?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>Resolution time varies by category and complexity:</p>
+                            <ul>
+                                <li><strong>Simple Issues:</strong> 24-48 hours (IT support, document requests)</li>
+                                <li><strong>Standard Issues:</strong> 3-5 working days (Academic queries, facility repairs)</li>
+                                <li><strong>Complex Issues:</strong> 7-14 working days (Administrative changes, policy matters)</li>
+                                <li><strong>Investigation Required:</strong> 15-30 days (Harassment, serious disciplinary matters)</li>
+                            </ul>
+                            <p><strong>SLA:</strong> We commit to providing a <strong>first response within 24 hours</strong> and weekly progress updates until resolution.</p>
+                            <span class="faq-tag">Tracking</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resolution -->
+                <div class="faq-item" data-category="resolution">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-redo-alt"></i>
+                            </div>
+                            What if I'm not satisfied with the resolution?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>If you're not satisfied with the resolution:</p>
+                            <ul>
+                                <li>You can <strong>Reopen</strong> the grievance within 7 days of closure with additional comments</li>
+                                <li>File an <strong>Appeal</strong> through the "Appeal Decision" option in your dashboard</li>
+                                <li>Escalate to senior authorities by selecting "Escalate" option</li>
+                                <li>Contact the Grievance Cell directly through the Mail system</li>
+                            </ul>
+                            <p>Every appeal is reviewed by a senior officer not involved in the original decision to ensure fairness.</p>
+                            <span class="faq-tag">Resolution</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="resolution">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            Can I communicate with the officer handling my case?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Yes!</strong> Two-way communication is available:</p>
+                            <ul>
+                                <li><strong>Mail System:</strong> Access the internal messaging system from your dashboard</li>
+                                <li><strong>Comments:</strong> Add comments to your grievance thread anytime</li>
+                                <li><strong>Notifications:</strong> Officers may request additional info via email/SMS</li>
+                                <li><strong>Meetings:</strong> For complex issues, you can request a video call appointment</li>
+                            </ul>
+                            <p>All communications are logged and attached to your grievance record for transparency.</p>
+                            <span class="faq-tag">Resolution</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical -->
+                <div class="faq-item" data-category="technical">
+                    <div class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            The website is not loading / I'm facing technical issues. What should I do?
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>If you encounter technical problems:</p>
+                            <ul>
+                                <li><strong>Clear Cache:</strong> Clear browser cache and cookies, then reload</li>
+                                <li><strong>Browser:</strong> Use updated Chrome, Firefox, or Safari for best experience</li>
+                                <li><strong>Mobile:</strong> Enable desktop mode if mobile site has issues</li>
+                                <li><strong>Support Form:</strong> Click the <strong>"Support"</strong> button in your dashboard</li>
+                                <li><strong>Emergency:</strong> Email technical support at <strong>support@codeflow.gov</strong></li>
+                            </ul>
+                            <p><strong>System Requirements:</strong> Internet Explorer is not supported. Use Edge, Chrome, Firefox, or Safari updated within last 2 years.</p>
+                            <span class="faq-tag">Technical</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Results State -->
+            <div class="no-results" id="noResults">
+                <div class="no-results-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>No matching questions found</h3>
+                <p>Try different keywords or browse by category above</p>
+                <a href="contact.html" class="btn btn-primary">Contact Support</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <div class="cta-icon">
+                <i class="fas fa-headset"></i>
+            </div>
+            <h2 class="cta-title">Still have questions?</h2>
+            <p class="cta-subtitle">Can't find the answer you're looking for? Our support team is here to help you 24/7</p>
+            <div class="cta-buttons">
+                <a href="contact.html" class="cta-btn-primary">
+                    <i class="fas fa-envelope"></i> Contact Support
+                </a>
+                <a href="../User files/Grievanceform.html" class="cta-btn-secondary">
+                    <i class="fas fa-paper-plane"></i> Submit Grievance
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    Code Flow
+                </div>
+                <p>Empowering citizens with a transparent, efficient, and user-friendly digital grievance resolution platform. Your voice matters, and we're here to ensure it's heard.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Use Cases</h4>
+                <ul>
+                    <li><a href="Grievanceform.html"><i class="fas fa-chevron-right"></i> File Grievance</a></li>
+                    <li><a href="Login.html"><i class="fas fa-chevron-right"></i> Track Status</a></li>
+                    <li><a href="MyGrievances.html"><i class="fas fa-chevron-right"></i> View History</a></li>
+                    <li><a href="insights_dashboard.html"><i class="fas fa-chevron-right"></i> Dashboard</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about.html"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Our Team</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Careers</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Press</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="FAQs.html"><i class="fas fa-chevron-right"></i> FAQs</a></li>
+                    <li><a href="Admin files\Guidelines.html"><i class="fas fa-chevron-right"></i> Guidelines</a></li>
+                    <li><a href="notice_board.html"><i class="fas fa-chevron-right"></i> Notice Board</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Help Center</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="mailto:support@codeflow.gov"><i class="fas fa-envelope"></i> support@codeflow.gov</a></li>
+                    <li><a href="tel:18001234567"><i class="fas fa-phone"></i> 1800-123-4567</a></li>
+                    <li><a href="contact.html"><i class="fas fa-map-marker-alt"></i> New Delhi, India</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 Code Flow Digital Grievance Portal. All rights reserved.</p>
+            <div>
+                <a href="#" style="color: #64748b; text-decoration: none; margin-right: 2rem;">Privacy Policy</a>
+                <a href="#" style="color: #64748b; text-decoration: none;">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Accordion Functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const item = this.parentElement;
+                const isActive = item.classList.contains('active');
+                
+                // Close all items
+                document.querySelectorAll('.faq-item').forEach(faq => {
+                    faq.classList.remove('active');
+                });
+                
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Category Filtering
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        const faqItems = document.querySelectorAll('.faq-item');
+        const noResults = document.getElementById('noResults');
+
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Update active tab
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const category = this.getAttribute('data-category');
+                let visibleCount = 0;
+                
+                // Filter items
+                faqItems.forEach(item => {
+                    if (category === 'all' || item.getAttribute('data-category') === category) {
+                        item.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+                
+                // Show/hide no results message
+                if (visibleCount === 0) {
+                    noResults.classList.add('visible');
+                } else {
+                    noResults.classList.remove('visible');
+                }
+            });
+        });
+
+        // Search Functionality
+        const searchInput = document.getElementById('faqSearch');
+        const clearSearch = document.getElementById('clearSearch');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            // Show/hide clear button
+            if (searchTerm.length > 0) {
+                clearSearch.classList.add('visible');
+            } else {
+                clearSearch.classList.remove('visible');
+            }
+            
+            let visibleCount = 0;
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question-text').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer-content').textContent.toLowerCase();
+                
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                    
+                    // Highlight matches (optional enhancement)
+                    if (searchTerm.length > 0) {
+                        item.style.borderLeft = '4px solid var(--accent)';
+                    } else {
+                        item.style.borderLeft = 'none';
+                    }
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+            
+            // Show no results if needed
+            if (visibleCount === 0 && searchTerm.length > 0) {
+                noResults.classList.add('visible');
+            } else {
+                noResults.classList.remove('visible');
+            }
+            
+            // Reset category tabs to "All" when searching
+            if (searchTerm.length > 0) {
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-category="all"]').classList.add('active');
+            }
+        });
+
+        // Clear search
+        clearSearch.addEventListener('click', function() {
+            searchInput.value = '';
+            searchInput.focus();
+            this.classList.remove('visible');
+            
+            // Show all items
+            faqItems.forEach(item => {
+                item.classList.remove('hidden');
+                item.style.borderLeft = 'none';
+            });
+            noResults.classList.remove('visible');
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+            } else {
+                navbar.style.boxShadow = 'none';
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Press '/' to focus search
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            
+            // Press 'Escape' to close all accordions
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                searchInput.blur();
+            }
+        });
+    </script>
+</body>
+</html>

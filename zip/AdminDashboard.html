@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Code Flow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-lighter: #dbeafe;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f97316;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #f1f5f9;
+            --white: #ffffff;
+            --icon-bar-width: 70px;
+            --panel-width: 280px;
+            --navbar-height: 70px;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* TOP NAVBAR */
+        .top-navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--navbar-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-left { display: flex; align-items: center; flex: 1; }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .nav-brand-text {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-center {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+        }
+
+        .search-wrapper { position: relative; width: 100%; }
+
+        .search-box {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: var(--white);
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-btn {
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .nav-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn-accent {
+            background: linear-gradient(135deg, var(--accent), var(--warning));
+            color: white;
+        }
+
+        .nav-btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4);
+        }
+
+        /* SIDEBAR */
+        .sidebar-wrapper {
+            position: fixed;
+            left: 0;
+            top: var(--navbar-height);
+            bottom: 0;
+            z-index: 900;
+            display: flex;
+        }
+
+        .icon-sidebar {
+            width: var(--icon-bar-width);
+            background: var(--white);
+            border-right: 1px solid var(--light-gray);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem 0;
+            z-index: 901;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .icon-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0 0.75rem;
+        }
+
+        .icon-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: var(--gray);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+            border: none;
+            background: transparent;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary-lighter);
+            color: var(--primary);
+        }
+
+        .icon-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .icon-btn.active::before {
+            content: '';
+            position: absolute;
+            left: -0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .toggle-expand {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .toggle-expand:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .icon-btn::after {
+            content: attr(data-label);
+            position: absolute;
+            left: 60px;
+            background: var(--dark);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .icon-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        /* EXPANDABLE PANEL */
+        .expandable-panel {
+            width: var(--panel-width);
+            background: var(--white);
+            border-right: 1px solid var(--light-gray);
+            height: calc(100vh - var(--navbar-height));
+            overflow-y: auto;
+            padding: 1.5rem;
+            transform: translateX(-100%);
+            transition: var(--transition);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+            z-index: 900;
+            position: absolute;
+            left: var(--icon-bar-width);
+            top: 0;
+        }
+
+        .expandable-panel.open { transform: translateX(0); }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .close-panel {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: var(--light-gray);
+            color: var(--gray);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-panel:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .user-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            box-shadow: 0 10px 25px rgba(30, 64, 175, 0.2);
+        }
+
+        .user-avatar {
+            width: 50px; height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin: 0 auto 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .nav-section { margin-bottom: 1.25rem; }
+
+        .section-title {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .section-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(14, 165, 233, 0.1));
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .menu-icon {
+            width: 18px; height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .signout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #dc2626;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-top: 0.5rem;
+        }
+
+        .signout-btn:hover {
+            background: linear-gradient(135deg, #fecaca, #fca5a5);
+            transform: translateY(-2px);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: var(--icon-bar-width);
+            margin-top: var(--navbar-height);
+            padding: 2rem;
+            min-height: calc(100vh - var(--navbar-height));
+            transition: var(--transition);
+        }
+
+        .main-content.panel-open {
+            margin-left: calc(var(--icon-bar-width) + var(--panel-width));
+        }
+
+        .panel-overlay {
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 800;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .panel-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ADMIN DASHBOARD STYLES */
+        .page-header { margin-bottom: 2.5rem; }
+
+        .welcome-text {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-text span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .date-text {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-lighter);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: var(--primary);
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, #ffedd5, #fed7aa);
+            color: var(--warning);
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: var(--success);
+        }
+
+        .stat-icon.red {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: var(--danger);
+        }
+
+        .stat-icon.purple {
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            color: #4f46e5;
+        }
+
+        .stat-trend {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .stat-trend.up {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .stat-trend.down {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-lighter);
+        }
+
+        .card:hover::before { transform: scaleX(1); }
+
+        .card-icon-wrapper {
+            width: 90px; height: 90px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--light-gray), #e2e8f0);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            transition: all 0.4s ease;
+        }
+
+        .card:hover .card-icon-wrapper {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+
+        .card-arrow {
+            margin-top: 1.5rem;
+            width: 40px; height: 40px;
+            background: var(--light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--gray);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .card-arrow {
+            background: var(--primary);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        /* Support Modal */
+        .support-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .support-modal-overlay.active { display: flex; }
+
+        .support-modal {
+            background: var(--white);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes slideInNotif {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .support-modal-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1.5rem 2rem;
+            color: white;
+            position: relative;
+        }
+
+        .support-modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .support-modal-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .support-modal-close {
+            position: absolute;
+            top: 1.5rem; right: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .support-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .support-tabs {
+            display: flex;
+            background: var(--light-gray);
+            padding: 0.5rem;
+            margin: 1.5rem 2rem 0;
+            border-radius: 12px;
+        }
+
+        .support-tab {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            color: var(--gray);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .support-tab.active {
+            background: var(--white);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .support-tab:hover:not(.active) { color: var(--dark); }
+
+        .support-tab-content {
+            display: none;
+            padding: 1.5rem 2rem 2rem;
+            overflow-y: auto;
+            max-height: calc(90vh - 200px);
+        }
+
+        .support-tab-content.active { display: block; }
+
+        .form-group { margin-bottom: 1.25rem; }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label .required { color: var(--danger); }
+
+        .form-select,
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .form-select:focus,
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--light-gray);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary-light);
+            background: var(--primary-lighter);
+        }
+
+        .file-upload-area.dragover {
+            border-color: var(--primary);
+            background: var(--primary-lighter);
+            transform: scale(1.02);
+        }
+
+        .file-upload-icon {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--primary-lighter), #bfdbfe);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .file-upload-text {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-text strong { color: var(--primary); }
+
+        .file-upload-hint {
+            font-size: 0.8rem;
+            color: var(--gray);
+            opacity: 0.8;
+        }
+
+        .file-input { display: none; }
+
+        .uploaded-files { margin-top: 1rem; }
+
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--light-gray);
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+        }
+
+        .uploaded-file-icon {
+            width: 40px; height: 40px;
+            background: var(--white);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .uploaded-file-info { flex: 1; }
+
+        .uploaded-file-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .uploaded-file-size {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .uploaded-file-remove {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .uploaded-file-remove:hover { background: #fee2e2; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(30, 64, 175, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .query-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .query-item {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .query-item:hover {
+            background: var(--white);
+            border-color: var(--primary-lighter);
+            box-shadow: var(--shadow);
+        }
+
+        .query-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .query-type {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .query-type-icon {
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .query-type-icon.bug { background: #fee2e2; color: var(--danger); }
+        .query-type-icon.feature { background: #d1fae5; color: var(--success); }
+        .query-type-icon.support { background: #dbeafe; color: var(--primary); }
+        .query-type-icon.other { background: #f3f4f6; color: var(--gray); }
+
+        .query-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .query-status.pending { background: #fef3c7; color: #d97706; }
+        .query-status.resolved { background: #d1fae5; color: #059669; }
+        .query-status.in-progress { background: #dbeafe; color: #2563eb; }
+
+        .query-subject {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .query-preview {
+            font-size: 0.85rem;
+            color: var(--gray);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .query-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .query-date {
+            font-size: 0.8rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .query-attachments {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray);
+        }
+
+        .empty-state-icon {
+            width: 80px; height: 80px;
+            background: var(--light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: var(--gray);
+        }
+
+        .empty-state-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .query-detail {
+            display: none;
+            padding: 1.5rem 2rem 2rem;
+        }
+
+        .query-detail.active { display: block; }
+
+        .query-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-to-list {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--light-gray);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .back-to-list:hover {
+            background: var(--primary-lighter);
+            color: var(--primary);
+        }
+
+        .query-detail-content {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .query-detail-row {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .query-detail-label {
+            width: 120px;
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .query-detail-value {
+            flex: 1;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .query-detail-description {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            line-height: 1.6;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-value { animation: countUp 0.5s ease-out; }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .stats-row { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 1200px) {
+            .cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 1024px) {
+            .nav-center { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .icon-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .icon-sidebar.mobile-open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .main-content.panel-open { margin-left: 0; }
+            .expandable-panel {
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 902;
+            }
+            .mobile-menu-btn { display: flex !important; }
+            .nav-brand-text { display: none; }
+            .nav-btn span { display: none; }
+            .nav-btn { padding: 0.625rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr; }
+            .support-modal { max-width: 100%; margin: 1rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            background: var(--light-gray);
+            border: none;
+            color: var(--dark);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            margin-right: 0.75rem;
+        }
+    </style>
+    <base target="_blank">
+<base target="_blank">
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="panel-overlay" id="panelOverlay" onclick="togglePanel()"></div>
+
+    <!-- TOP NAVBAR -->
+    <nav class="top-navbar">
+        <div class="nav-left">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="AdminDashboard.html" class="nav-brand">
+                <div class="nav-logo">
+                    <i class="fas fa-code-branch"></i>
+                </div>
+                <span class="nav-brand-text">CODE FLOW</span>
+            </a>
+        </div>
+
+        <div class="nav-center">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-box" placeholder="Search modules, grievances, or users...">
+            </div>
+        </div>
+
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="location.href='codeflow_redesign.html'">
+                <i class="fas fa-home"></i> <span>Home</span>
+            </button>
+            <button class="nav-btn" id="notifBtn">
+                <i class="fas fa-bell"></i> <span>Notifications</span>
+                <span id="notifBadge" style="background: var(--danger); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 4px;">0</span>
+            </button>
+            <button class="nav-btn nav-btn-accent" onclick="openSupportModal()">
+                <i class="fas fa-headset"></i> <span>Support</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- SIDEBAR WRAPPER -->
+    <div class="sidebar-wrapper">
+        <aside class="icon-sidebar" id="iconSidebar">
+            <nav class="icon-nav">
+                <button class="icon-btn toggle-expand active" onclick="togglePanel()" data-label="Expand Menu" id="toggleBtn">
+                    <i class="fas fa-table-columns" id="toggleIcon"></i>
+                </button>
+
+                <a href="AdminDashboard.html" class="icon-btn active" data-label="Dashboard">
+                    <i class="fas fa-th-large"></i>
+                </a>
+                <a href="2_all_grievances.html" class="icon-btn" data-label="All Grievances">
+                    <i class="fas fa-clipboard-list"></i>
+                </a>
+                <a href="insights&dashoboards.html" class="icon-btn" data-label="Insights">
+                    <i class="fas fa-chart-pie"></i>
+                </a>
+                <a href="check_status.html" class="icon-btn" data-label="Check Status">
+                    <i class="fas fa-tasks"></i>
+                </a>
+                <a href="mail.html" class="icon-btn" data-label="Mail">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="Guidelines.html" class="icon-btn" data-label="Guidelines">
+                    <i class="fas fa-book"></i>
+                </a>
+                <a href="notice_board.html" class="icon-btn" data-label="Notice Board">
+                    <i class="fas fa-bullhorn"></i>
+                </a>
+                <a href="edit_profile.html" class="icon-btn" data-label="Edit Profile">
+                    <i class="fas fa-user-cog"></i>
+                </a>
+                <a href="Account_Activity.html" class="icon-btn " data-label="Account Activity">
+                    <i class="fas fa-history"></i>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="expandable-panel open" id="expandablePanel">
+            <div class="user-card">
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="user-name">Administrator</div>
+                <div class="user-role">Super Admin</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Main Menu</div>
+                <nav class="section-menu">
+                    <a href="AdminDashboard.html" class="menu-item active">
+                        <span class="menu-icon"><i class="fas fa-th-large"></i></span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="2_all_grievances.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-clipboard-list"></i></span>
+                        <span>All Grievances</span>
+                    </a>
+                    <a href="insights&dashoboards.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-chart-pie"></i></span>
+                        <span>Insights & Dashboard</span>
+                    </a>
+                    <a href="check_status.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-tasks"></i></span>
+                        <span>Check Status</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Communication</div>
+                <nav class="section-menu">
+                    <a href="mail.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-envelope"></i></span>
+                        <span>Mail</span>
+                    </a>
+                    <a href="Guidelines.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-book"></i></span>
+                        <span>Guidelines for Students</span>
+                    </a>
+                    <a href="notice_board.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-bullhorn"></i></span>
+                        <span>Notice Board</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Settings</div>
+                <nav class="section-menu">
+                    <a href="edit_profile.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-user-cog"></i></span>
+                        <span>Edit Profile</span>
+                    </a>
+                    <a href="account_activity.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-history"></i></span>
+                        <span>Account Activity</span>
+                    </a>
+                </nav>
+            </div>
+
+            <button class="signout-btn" onclick="location.href='login.html'">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sign Out</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content panel-open" id="mainContent">
+        <div class="page-header">
+            <h1 class="welcome-text">Welcome back, <span>Admin</span> 👋</h1>
+            <p class="date-text">Here's what's happening with your grievance portal today</p>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon green">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">All Grievances</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="processingCount">0</div>
+                <div class="stat-label">Processing</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="reviewedCount">0</div>
+                <div class="stat-label">Reviewed</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="solvedCount">0</div>
+                <div class="stat-label">Solved</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon red">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="rejectedCount">0</div>
+                <div class="stat-label">Rejected</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">
+            <i class="fas fa-th-large" style="color: var(--primary);"></i>
+            Quick Access
+        </h2>
+
+        <div class="cards-grid">
+            <a href="2_all_grievances.html" class="card">
+                <div class="card-icon-wrapper">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="card-title">All Grievances</div>
+                <div class="card-desc">View and manage all submitted grievances across departments</div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="insights&dashoboards.html" class="card">
+                <div class="card-icon-wrapper">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="card-title">Insights & Dashboards</div>
+                <div class="card-desc">Analytics, reports and performance metrics</div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="check_status.html" class="card">
+                <div class="card-icon-wrapper">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="card-title">Check Status</div>
+                <div class="card-desc">Track grievance status and progress updates</div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="Guidelines.html" class="card">
+                <div class="card-icon-wrapper">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="card-title">Guidelines for Students</div>
+                <div class="card-desc">Policy documents and procedure guidelines</div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="mail.html" class="card">
+                <div class="card-icon-wrapper">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <div class="card-title">Mail </div>
+                <div class="card-desc">Communicate with students and staff</div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="n.html" class="card">
+                <div class="card-icon-wrapper">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="card-title">Notice Board</div>
+                <div class="card-desc">Post announcements and important updates</div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- Support Modal -->
+    <div class="support-modal-overlay" id="supportModalOverlay">
+        <div class="support-modal">
+            <div class="support-modal-header">
+                <div class="support-modal-title">
+                    <i class="fas fa-headset"></i> Technical Support
+                </div>
+                <div class="support-modal-subtitle">Report issues or request assistance from our development team</div>
+                <button class="support-modal-close" onclick="closeSupportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="support-tabs">
+                <button class="support-tab active" onclick="switchTab('new')">
+                    <i class="fas fa-plus-circle"></i> New Query
+                </button>
+                <button class="support-tab" onclick="switchTab('history')">
+                    <i class="fas fa-history"></i> My Queries
+                </button>
+            </div>
+
+            <div class="support-tab-content active" id="newQueryTab">
+                <form id="supportForm" onsubmit="submitSupportQuery(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Issue Type <span class="required">*</span></label>
+                            <select class="form-select" id="issueType" required>
+                                <option value="">Select Issue Type</option>
+                                <option value="bug">Bug Report</option>
+                                <option value="feature">Feature Request</option>
+                                <option value="performance">Performance Issue</option>
+                                <option value="ui">UI/UX Problem</option>
+                                <option value="security">Security Concern</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Priority <span class="required">*</span></label>
+                            <select class="form-select" id="priority" required>
+                                <option value="">Select Priority</option>
+                                <option value="low">Low - Minor issue</option>
+                                <option value="medium">Medium - Affects workflow</option>
+                                <option value="high">High - Critical issue</option>
+                                <option value="urgent">Urgent - System down</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Module/Screen <span class="required">*</span></label>
+                        <select class="form-select" id="module" required>
+                            <option value="">Select Module</option>
+                            <option value="dashboard">Dashboard</option>
+                            <option value="grievances">Grievance Management</option>
+                            <option value="mail">Mail System</option>
+                            <option value="notifications">Notifications</option>
+                            <option value="reports">Reports & Analytics</option>
+                            <option value="user-management">User Management</option>
+                            <option value="settings">Settings</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Subject <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="subject" placeholder="Brief description of the issue" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description <span class="required">*</span></label>
+                        <textarea class="form-textarea" id="description" placeholder="Please provide detailed information about the issue:
+- What were you trying to do?
+- What happened instead?
+- Steps to reproduce the issue
+- Expected behavior" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Attachments</label>
+                        <div class="file-upload-area" onclick="document.getElementById('fileInput').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <div class="file-upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <div class="file-upload-text">
+                                <strong>Click to upload</strong> or drag and drop
+                            </div>
+                            <div class="file-upload-hint">
+                                Supports: Images, Videos, PDFs, Documents (Max 10MB each)
+                            </div>
+                        </div>
+                        <input type="file" class="file-input" id="fileInput" multiple accept="image/*,video/*,.pdf,.doc,.docx,.txt" onchange="handleFileSelect(event)">
+                        <div class="uploaded-files" id="uploadedFiles"></div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Submit Query
+                    </button>
+                </form>
+            </div>
+
+            <div class="support-tab-content" id="queryHistoryTab">
+                <div class="query-list" id="queryList"></div>
+            </div>
+
+            <div class="query-detail" id="queryDetailView">
+                <div class="query-detail-header">
+                    <button class="back-to-list" onclick="showQueryList()">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </button>
+                </div>
+                <div class="query-detail-content" id="queryDetailContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Panel Toggle Functions
+        const expandablePanel = document.getElementById('expandablePanel');
+        const mainContent = document.getElementById('mainContent');
+        const panelOverlay = document.getElementById('panelOverlay');
+        const iconSidebar = document.getElementById('iconSidebar');
+
+        function togglePanel() {
+            expandablePanel.classList.toggle('open');
+            if (window.innerWidth > 768) {
+                mainContent.classList.toggle('panel-open');
+            } else {
+                panelOverlay.classList.toggle('active');
+            }
+        }
+
+        function toggleMobileSidebar() {
+            iconSidebar.classList.toggle('mobile-open');
+            panelOverlay.classList.toggle('active');
+        }
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768 && expandablePanel.classList.contains('open')) {
+                    togglePanel();
+                }
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                panelOverlay.classList.remove('active');
+                iconSidebar.classList.remove('mobile-open');
+                if (expandablePanel.classList.contains('open')) {
+                    mainContent.classList.add('panel-open');
+                } else {
+                    mainContent.classList.remove('panel-open');
+                }
+            } else {
+                mainContent.classList.remove('panel-open');
+                if (expandablePanel.classList.contains('open')) {
+                    panelOverlay.classList.add('active');
+                }
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'm' || e.key === 'M') {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    togglePanel();
+                }
+            }
+        });
+
+        // Stats Functions
+        function loadRealTimeStats() {
+            const regularDB = JSON.parse(localStorage.getItem('grievanceDatabase') || '{}');
+            let allGrievances = [];
+
+            for (const [category, complaints] of Object.entries(regularDB)) {
+                complaints.forEach(g => {
+                    allGrievances.push({...g, category: g.department || category, isAnonymous: false});
+                });
+            }
+
+            const anonDB = JSON.parse(localStorage.getItem('anonymousGrievanceDatabase') || '[]');
+            anonDB.forEach(g => allGrievances.push({...g, isAnonymous: true}));
+
+            const totalCount = allGrievances.length;
+            const processingCount = allGrievances.filter(g => g.status === 'processing' || g.status === 'pending' || !g.status).length;
+            const reviewedCount = allGrievances.filter(g => g.status === 'reviewed').length;
+            const solvedCount = allGrievances.filter(g => ['solved','resolved','closed','completed'].includes(g.status)).length;
+            const rejectedCount = allGrievances.filter(g => g.status === 'rejected').length;
+
+            animateValue(document.getElementById('totalCount'), 0, totalCount, 1000);
+            animateValue(document.getElementById('processingCount'), 0, processingCount, 1000);
+            animateValue(document.getElementById('reviewedCount'), 0, reviewedCount, 1000);
+            animateValue(document.getElementById('solvedCount'), 0, solvedCount, 1000);
+            animateValue(document.getElementById('rejectedCount'), 0, rejectedCount, 1000);
+
+            document.getElementById('notifBadge').textContent = processingCount;
+            updateTrendIndicators(allGrievances);
+        }
+
+        function updateTrendIndicators(grievances) {
+            const now = new Date();
+            const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+            const countByDate = (startDate, endDate) => grievances.filter(g => {
+                const d = new Date(g.submissionDate || g.date || Date.now());
+                return d >= startDate && d < endDate;
+            }).length;
+
+            const countByStatus = (statuses, startDate, endDate) => grievances.filter(g => {
+                const d = new Date(g.submissionDate || g.date || Date.now());
+                const statusMatch = Array.isArray(statuses) ? statuses.includes(g.status) || (!g.status && statuses.includes('processing')) : g.status === statuses;
+                return statusMatch && d >= startDate && d < endDate;
+            }).length;
+
+            const totalCurrent = countByDate(sevenDaysAgo, now);
+            const totalPrev = countByDate(fourteenDaysAgo, sevenDaysAgo);
+            updateTrendDisplay('total', totalCurrent, totalPrev);
+
+            updateTrendDisplay('processing', countByStatus(['processing','pending'], sevenDaysAgo, now), countByStatus(['processing','pending'], fourteenDaysAgo, sevenDaysAgo));
+            updateTrendDisplay('reviewed', countByStatus('reviewed', sevenDaysAgo, now), countByStatus('reviewed', fourteenDaysAgo, sevenDaysAgo));
+            updateTrendDisplay('solved', countByStatus(['solved','resolved'], sevenDaysAgo, now), countByStatus(['solved','resolved'], fourteenDaysAgo, sevenDaysAgo));
+            updateTrendDisplay('rejected', countByStatus('rejected', sevenDaysAgo, now), countByStatus('rejected', fourteenDaysAgo, sevenDaysAgo));
+        }
+
+        function updateTrendDisplay(type, current, previous) {
+            let percent = previous === 0 ? (current > 0 ? 100 : 0) : Math.round(((current - previous) / previous) * 100);
+            let trendClass = percent >= 0 ? 'up' : 'down';
+
+            const trendEl = document.getElementById(type + 'Trend');
+            const iconEl = document.getElementById(type + 'TrendIcon');
+            const textEl = document.getElementById(type + 'TrendText');
+
+            if (trendEl && iconEl && textEl) {
+                trendEl.className = 'stat-trend ' + trendClass;
+                iconEl.className = 'fas fa-arrow-' + (trendClass === 'up' ? 'up' : 'down');
+                textEl.textContent = Math.abs(percent) + '%';
+            }
+        }
+
+        function animateValue(obj, start, end, duration) {
+            if (!obj) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString();
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadRealTimeStats);
+        setInterval(loadRealTimeStats, 30000);
+
+        // Support Modal Functions
+        let uploadedFiles = [];
+        let supportQueries = JSON.parse(localStorage.getItem('supportQueries')) || [];
+        const DEVELOPER_EMAIL = 'developer@codeflow.edu';
+
+        function openSupportModal() {
+            document.getElementById('supportModalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            loadQueryHistory();
+        }
+
+        function closeSupportModal() {
+            document.getElementById('supportModalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            resetForm();
+        }
+
+        document.getElementById('supportModalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeSupportModal();
+        });
+
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.support-tab');
+            const contents = document.querySelectorAll('.support-tab-content');
+            const detailView = document.getElementById('queryDetailView');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            detailView.classList.remove('active');
+
+            if (tab === 'new') {
+                tabs[0].classList.add('active');
+                document.getElementById('newQueryTab').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('queryHistoryTab').classList.add('active');
+                loadQueryHistory();
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            processFiles(Array.from(e.dataTransfer.files));
+        }
+
+        function handleFileSelect(e) {
+            processFiles(Array.from(e.target.files));
+        }
+
+        function processFiles(files) {
+            files.forEach(file => {
+                if (file.size > 10 * 1024 * 1024) {
+                    showNotification('File too large (Max 10MB)', 'error');
+                    return;
+                }
+                const fileData = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    size: formatFileSize(file.size),
+                    type: file.type,
+                    dataUrl: null
+                };
+                const reader = new FileReader();
+                reader.onload = function(e) { fileData.dataUrl = e.target.result; };
+                reader.readAsDataURL(file);
+                uploadedFiles.push(fileData);
+            });
+            renderUploadedFiles();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function renderUploadedFiles() {
+            const container = document.getElementById('uploadedFiles');
+            container.innerHTML = uploadedFiles.map(file => `
+                <div class="uploaded-file">
+                    <div class="uploaded-file-icon">
+                        <i class="fas ${getFileIcon(file.type)}"></i>
+                    </div>
+                    <div class="uploaded-file-info">
+                        <div class="uploaded-file-name">${file.name}</div>
+                        <div class="uploaded-file-size">${file.size}</div>
+                    </div>
+                    <button class="uploaded-file-remove" onclick="removeFile(${file.id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function getFileIcon(mimeType) {
+            if (mimeType.includes('image')) return 'fa-image';
+            if (mimeType.includes('video')) return 'fa-video';
+            if (mimeType.includes('pdf')) return 'fa-file-pdf';
+            if (mimeType.includes('word') || mimeType.includes('document')) return 'fa-file-word';
+            return 'fa-file';
+        }
+
+        function removeFile(fileId) {
+            uploadedFiles = uploadedFiles.filter(f => f.id !== fileId);
+            renderUploadedFiles();
+        }
+
+        async function submitSupportQuery(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+            const formData = {
+                id: Date.now(),
+                issueType: document.getElementById('issueType').value,
+                priority: document.getElementById('priority').value,
+                module: document.getElementById('module').value,
+                subject: document.getElementById('subject').value,
+                description: document.getElementById('description').value,
+                attachments: uploadedFiles.map(f => ({name: f.name, size: f.size, type: f.type, dataUrl: f.dataUrl})),
+                status: 'pending',
+                date: new Date().toISOString(),
+                sender: 'Administrator',
+                senderEmail: 'admin@codeflow.edu'
+            };
+
+            supportQueries.unshift(formData);
+            localStorage.setItem('supportQueries', JSON.stringify(supportQueries));
+            await sendEmailToDeveloper(formData);
+
+            showNotification('Query submitted successfully! Developer has been notified.');
+            resetForm();
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Query';
+            setTimeout(() => switchTab('history'), 1000);
+        }
+
+        async function sendEmailToDeveloper(queryData) {
+            const emailData = {
+                id: Date.now(),
+                from: queryData.sender,
+                fromEmail: queryData.senderEmail,
+                to: DEVELOPER_EMAIL,
+                subject: `[SUPPORT] ${queryData.subject}`,
+                preview: `[${queryData.issueType.toUpperCase()}] ${queryData.description.substring(0, 100)}...`,
+                body: generateEmailBody(queryData),
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                status: 'pending',
+                starred: false,
+                read: false,
+                folder: 'inbox',
+                attachments: queryData.attachments,
+                isSupportQuery: true,
+                supportQueryId: queryData.id
+            };
+
+            let developerInbox = JSON.parse(localStorage.getItem('developerInbox')) || [];
+            developerInbox.unshift(emailData);
+            localStorage.setItem('developerInbox', JSON.stringify(developerInbox));
+        }
+
+        function generateEmailBody(queryData) {
+            const priorityEmoji = {'low': 'Low', 'medium': 'Medium', 'high': 'High', 'urgent': 'URGENT'};
+            return `Dear Developer,
+
+A new technical support query has been submitted.
+
+QUERY DETAILS:
+- Issue Type: ${queryData.issueType.toUpperCase()}
+- Priority: ${priorityEmoji[queryData.priority] || queryData.priority}
+- Module: ${queryData.module}
+- Submitted: ${new Date(queryData.date).toLocaleString()}
+
+SUBJECT:
+${queryData.subject}
+
+DESCRIPTION:
+${queryData.description}
+
+ATTACHMENTS:
+${queryData.attachments.length > 0 ? queryData.attachments.map(att => `- ${att.name} (${att.size})`).join('\n') : 'No attachments'}
+
+Please review and take appropriate action.
+
+Best regards,
+Code Flow Support System`;
+        }
+
+        function loadQueryHistory() {
+            const container = document.getElementById('queryList');
+            if (supportQueries.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                        <div class="empty-state-title">No queries yet</div>
+                        <p>Your submitted support queries will appear here</p>
+                    </div>`;
+                return;
+            }
+            container.innerHTML = supportQueries.map(query => `
+                <div class="query-item" onclick="showQueryDetail(${query.id})">
+                    <div class="query-header">
+                        <div class="query-type">
+                            <div class="query-type-icon ${query.issueType}">
+                                <i class="fas ${getIssueIcon(query.issueType)}"></i>
+                            </div>
+                            <span>${formatIssueType(query.issueType)}</span>
+                        </div>
+                        <span class="query-status ${query.status}">${formatStatus(query.status)}</span>
+                    </div>
+                    <div class="query-subject">${query.subject}</div>
+                    <div class="query-preview">${query.description}</div>
+                    <div class="query-footer">
+                        <div class="query-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            ${new Date(query.date).toLocaleDateString()}
+                        </div>
+                        ${query.attachments.length > 0 ? `
+                            <div class="query-attachments">
+                                <i class="fas fa-paperclip"></i>
+                                ${query.attachments.length} file${query.attachments.length > 1 ? 's' : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showQueryDetail(queryId) {
+            const query = supportQueries.find(q => q.id === queryId);
+            if (!query) return;
+            document.getElementById('queryHistoryTab').classList.remove('active');
+            document.getElementById('queryDetailView').classList.add('active');
+
+            const priorityColors = {'low': '#10b981', 'medium': '#f59e0b', 'high': '#ef4444', 'urgent': '#dc2626'};
+
+            document.getElementById('queryDetailContent').innerHTML = `
+                <div class="query-detail-row">
+                    <div class="query-detail-label">Issue Type</div>
+                    <div class="query-detail-value">
+                        <i class="fas ${getIssueIcon(query.issueType)}"></i>
+                        ${formatIssueType(query.issueType)}
+                    </div>
+                </div>
+                <div class="query-detail-row">
+                    <div class="query-detail-label">Priority</div>
+                    <div class="query-detail-value" style="color: ${priorityColors[query.priority]}">
+                        ${query.priority.toUpperCase()}
+                    </div>
+                </div>
+                <div class="query-detail-row">
+                    <div class="query-detail-label">Module</div>
+                    <div class="query-detail-value">${query.module}</div>
+                </div>
+                <div class="query-detail-row">
+                    <div class="query-detail-label">Status</div>
+                    <div class="query-detail-value">
+                        <span class="query-status ${query.status}">${formatStatus(query.status)}</span>
+                    </div>
+                </div>
+                <div class="query-detail-row">
+                    <div class="query-detail-label">Submitted</div>
+                    <div class="query-detail-value">${new Date(query.date).toLocaleString()}</div>
+                </div>
+                <div class="query-detail-row" style="flex-direction: column;">
+                    <div class="query-detail-label" style="margin-bottom: 0.5rem;">Description</div>
+                    <div class="query-detail-description">${query.description.replace(/\n/g, '<br>')}</div>
+                </div>
+                ${query.attachments.length > 0 ? `
+                    <div class="query-detail-row" style="flex-direction: column; margin-top: 1rem;">
+                        <div class="query-detail-label" style="margin-bottom: 0.5rem;">Attachments</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${query.attachments.map(att => `
+                                <a href="${att.dataUrl}" download="${att.name}" style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.5rem;
+                                    padding: 0.5rem 1rem;
+                                    background: var(--primary-lighter);
+                                    color: var(--primary);
+                                    text-decoration: none;
+                                    border-radius: 8px;
+                                    font-size: 0.9rem;
+                                    font-weight: 500;
+                                ">
+                                    <i class="fas ${getFileIcon(att.type)}"></i>
+                                    ${att.name}
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function showQueryList() {
+            document.getElementById('queryDetailView').classList.remove('active');
+            document.getElementById('queryHistoryTab').classList.add('active');
+        }
+
+        function getIssueIcon(type) {
+            const icons = {'bug': 'fa-bug', 'feature': 'fa-magic', 'performance': 'fa-bolt', 'ui': 'fa-paint-brush', 'security': 'fa-shield-alt', 'other': 'fa-clipboard-list'};
+            return icons[type] || 'fa-question';
+        }
+
+        function formatIssueType(type) {
+            const types = {'bug': 'Bug Report', 'feature': 'Feature Request', 'performance': 'Performance Issue', 'ui': 'UI/UX Problem', 'security': 'Security Concern', 'other': 'Other'};
+            return types[type] || type;
+        }
+
+        function formatStatus(status) {
+            const statuses = {'pending': 'Pending', 'in-progress': 'In Progress', 'resolved': 'Resolved'};
+            return statuses[status] || status;
+        }
+
+        function resetForm() {
+            document.getElementById('supportForm').reset();
+            uploadedFiles = [];
+            renderUploadedFiles();
+        }
+
+        function showNotification(message, type = 'success') {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${type === 'error' ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #10b981, #059669)'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                z-index: 9999;
+                font-weight: 600;
+                animation: slideInNotif 0.3s ease;
+            `;
+            notif.innerHTML = message;
+            document.body.appendChild(notif);
+            setTimeout(() => {
+                notif.style.animation = 'slideInNotif 0.3s ease reverse';
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

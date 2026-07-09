@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Activity - Code Flow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-lighter: #dbeafe;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f97316;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #f1f5f9;
+            --white: #ffffff;
+            --icon-bar-width: 70px;
+            --panel-width: 280px;
+            --navbar-height: 70px;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* ============================================
+           TOP NAVBAR - FIXED FULL WIDTH (from aa.html)
+        ============================================ */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .nav-brand-text {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        /* Search Bar - CENTER */
+        .nav-center {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: var(--white);
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-btn {
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .nav-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn-accent {
+            background: linear-gradient(135deg, var(--accent), var(--warning));
+            color: white;
+        }
+
+        .nav-btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4);
+        }
+
+        /* ============================================
+           SIDEBAR - BELOW NAVBAR (from aa.html)
+        ============================================ */
+        .sidebar-wrapper {
+            position: fixed;
+            left: 0;
+            top: var(--navbar-height);
+            bottom: 0;
+            z-index: 900;
+            display: flex;
+        }
+
+        /* Icon Bar */
+        .icon-sidebar {
+            width: var(--icon-bar-width);
+            background: var(--white);
+            border-right: 1px solid var(--light-gray);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem 0;
+            z-index: 901;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .icon-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0 0.75rem;
+        }
+
+        .icon-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: var(--gray);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+            border: none;
+            background: transparent;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary-lighter);
+            color: var(--primary);
+        }
+
+        .icon-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .icon-btn.active::before {
+            content: '';
+            position: absolute;
+            left: -0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 0 3px 3px 0;
+        }
+
+        /* Toggle Button - AT TOP with SQUARE ICON */
+        .toggle-expand {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .toggle-expand:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .toggle-expand i {
+            font-size: 1.1rem;
+        }
+
+        /* Tooltip */
+        .icon-btn::after {
+            content: attr(data-label);
+            position: absolute;
+            left: 60px;
+            background: var(--dark);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .icon-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        /* ============================================
+           EXPANDABLE PANEL (from aa.html)
+        ============================================ */
+        .expandable-panel {
+            width: var(--panel-width);
+            background: var(--white);
+            border-right: 1px solid var(--light-gray);
+            height: calc(100vh - var(--navbar-height));
+            overflow-y: auto;
+            padding: 1.5rem;
+            transform: translateX(-100%);
+            transition: var(--transition);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+            z-index: 900;
+            position: absolute;
+            left: var(--icon-bar-width);
+            top: 0;
+        }
+
+        .expandable-panel.open {
+            transform: translateX(0);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .close-panel {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: var(--light-gray);
+            color: var(--gray);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-panel:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* User Card */
+        .user-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            box-shadow: 0 10px 25px rgba(30, 64, 175, 0.2);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin: 0 auto 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        /* Navigation Sections */
+        .nav-section {
+            margin-bottom: 1.25rem;
+        }
+
+        .section-title {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .section-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(14, 165, 233, 0.1));
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .menu-icon {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Sign Out */
+        .signout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #dc2626;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-top: 0.5rem;
+        }
+
+        .signout-btn:hover {
+            background: linear-gradient(135deg, #fecaca, #fca5a5);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           MAIN CONTENT (Modified for Account Activity)
+        ============================================ */
+        .main-content {
+            margin-left: var(--icon-bar-width);
+            margin-top: var(--navbar-height);
+            padding: 2rem;
+            min-height: calc(100vh - var(--navbar-height));
+            transition: var(--transition);
+        }
+
+        .main-content.panel-open {
+            margin-left: calc(var(--icon-bar-width) + var(--panel-width));
+        }
+
+        /* Overlay */
+        .panel-overlay {
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 800;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .panel-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ============================================
+           RESPONSIVE (from aa.html)
+        ============================================ */
+        @media (max-width: 1024px) {
+            .nav-center {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .icon-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .icon-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .main-content.panel-open {
+                margin-left: 0;
+            }
+
+            .expandable-panel {
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 902;
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+
+            .nav-brand-text {
+                display: none;
+            }
+
+            .nav-btn span {
+                display: none;
+            }
+
+            .nav-btn {
+                padding: 0.625rem;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--light-gray);
+            border: none;
+            color: var(--dark);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            margin-right: 0.75rem;
+        }
+
+        /* ============================================
+           ACCOUNT ACTIVITY SPECIFIC STYLES
+        ============================================ */
+        .table-scroll-container {
+            overflow-y: auto;
+            overflow-x: auto;
+            max-height: 640px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .table-scroll-container::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 6px;
+            border: 3px solid #f1f5f9;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .login-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .login-modal-overlay.active {
+            display: flex;
+        }
+
+        .login-modal {
+            background: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 480px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalSlideIn 0.4s ease;
+            position: relative;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .hidden { display: none !important; }
+
+        /* Support Modal Styles */
+        .support-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .support-modal-overlay.active {
+            display: flex;
+        }
+
+        .support-modal {
+            background: var(--white);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .support-modal-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1.5rem 2rem;
+            color: white;
+            position: relative;
+        }
+
+        .support-modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .support-modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .support-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .support-tabs {
+            display: flex;
+            background: var(--light-gray);
+            padding: 0.5rem;
+            margin: 1.5rem 2rem 0;
+            border-radius: 12px;
+        }
+
+        .support-tab {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            color: var(--gray);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .support-tab.active {
+            background: var(--white);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .support-tab-content {
+            display: none;
+            padding: 1.5rem 2rem 2rem;
+            overflow-y: auto;
+            max-height: calc(90vh - 200px);
+        }
+
+        .support-tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-select,
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .form-select:focus,
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--light-gray);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary-light);
+            background: var(--primary-lighter);
+        }
+
+        .file-upload-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-lighter), #bfdbfe);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(30, 64, 175, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .support-modal {
+                max-width: 100%;
+                margin: 1rem;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <base target="_blank">
+<base target="_blank">
+</head>
+<body>
+
+    <!-- Overlay -->
+    <div class="panel-overlay" id="panelOverlay" onclick="togglePanel()"></div>
+
+    <!-- TOP NAVBAR (from aa.html) -->
+    <nav class="top-navbar">
+        <div class="nav-left">
+            <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="AdminDashboard.html" class="nav-brand">
+                <div class="nav-logo">
+                    <i class="fas fa-code-branch"></i>
+                </div>
+                <span class="nav-brand-text">CODE FLOW</span>
+            </a>
+        </div>
+
+        <!-- SEARCH BAR - CENTER -->
+        <div class="nav-center">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-box" placeholder="Search modules, grievances, or users...">
+            </div>
+        </div>
+
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="location.href='AdminDashboard.html'">
+                <i class="fas fa-home"></i> <span>Home</span>
+            </button>
+            <button class="nav-btn" id="notifBtn">
+                <i class="fas fa-bell"></i> <span>Notifications</span>
+                <span id="notifBadge" style="background: var(--danger); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 4px;">0</span>
+            </button>
+            <button class="nav-btn nav-btn-accent" onclick="openSupportModal()">
+                <i class="fas fa-headset"></i> <span>Support</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- SIDEBAR WRAPPER (from aa.html) - Admin Version -->
+    <div class="sidebar-wrapper">
+        <!-- Icon Sidebar -->
+        <aside class="icon-sidebar" id="iconSidebar">
+            <nav class="icon-nav">
+                <!-- Toggle Button - AT TOP with SQUARE ICON -->
+                <button class="icon-btn toggle-expand active" onclick="togglePanel()" data-label="Expand Menu" id="toggleBtn">
+                    <i class="fas fa-table-columns" id="toggleIcon"></i>
+                </button>
+
+                <!-- Menu Icons - Admin Links -->
+                <a href="AdminDashboard.html" class="icon-btn" data-label="Dashboard">
+                    <i class="fas fa-th-large"></i>
+                </a>
+                <a href="2_all_grievances.html" class="icon-btn" data-label="All Grievance">
+                    <i class="fas fa-clipboard-list"></i>
+                </a>
+                <a href="insights&dashoboards.html" class="icon-btn" data-label="Insights">
+                    <i class="fas fa-chart-pie"></i>
+                </a>
+                <a href="check_status.html" class="icon-btn" data-label="Check Status">
+                    <i class="fas fa-tasks"></i>
+                </a>
+                <a href="mail.html" class="icon-btn" data-label="Mail">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="Guidelines.html" class="icon-btn" data-label="Guidelines">
+                    <i class="fas fa-book"></i>
+                </a>
+                <a href="notice_board.html" class="icon-btn" data-label="Notice Board">
+                    <i class="fas fa-bullhorn"></i>
+                </a>
+                <a href="edit_profile.html" class="icon-btn" data-label="Edit Profile">
+                    <i class="fas fa-user-cog"></i>
+                </a>
+                <a href="Account_Activity.html" class="icon-btn active" data-label="Account Activity">
+                    <i class="fas fa-history"></i>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Expandable Panel - Admin Version -->
+        <div class="expandable-panel" id="expandablePanel">
+
+            <div class="user-card">
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="user-name">Administrator</div>
+                <div class="user-role">Super Admin</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Main Menu</div>
+                <nav class="section-menu">
+                    <a href="AdminDashboard.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-th-large"></i></span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="2_all_grievances.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-clipboard-list"></i></span>
+                        <span>All Grievance</span>
+                    </a>
+                    <a href="insights&dashoboards.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-chart-pie"></i></span>
+                        <span>Insights & Dashboard</span>
+                    </a>
+                    <a href="check_status.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-tasks"></i></span>
+                        <span>Check Status</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Communication</div>
+                <nav class="section-menu">
+                    <a href="mail.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-envelope"></i></span>
+                        <span>Mail</span>
+                    </a>
+                    <a href="Guidelines.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-book"></i></span>
+                        <span>Guidelines for Students</span>
+                    </a>
+                    <a href="notice_board.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-bullhorn"></i></span>
+                        <span>Notice Board</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Settings</div>
+                <nav class="section-menu">
+                    <a href="edit_profile.html" class="menu-item">
+                        <span class="menu-icon"><i class="fas fa-user-cog"></i></span>
+                        <span>Edit Profile</span>
+                    </a>
+                    <a href="Account_Activity.html" class="menu-item active">
+                        <span class="menu-icon"><i class="fas fa-history"></i></span>
+                        <span>Account Activity</span>
+                    </a>
+                </nav>
+            </div>
+
+            <button class="signout-btn" onclick="location.href='login.html'">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sign Out</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT (from Account_Activity.html) -->
+    <main class="main-content" id="mainContent">
+
+            <!-- VIEW 1: Account Activity List -->
+            <div id="accountActivityView" class="max-w-7xl mx-auto">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <div class="flex items-center gap-2 text-sm text-slate-500 mb-2">
+                        <a href="AdminDashboard.html" class="hover:text-blue-600">Dashboard</a>
+                        <i class="fas fa-chevron-right text-xs"></i>
+                        <span class="text-slate-900 font-medium">Account Activity</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-slate-900 mb-1">Account Activity & User Access</h1>
+                    <p class="text-slate-500">Manage user accounts, permissions, and system access</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+                    <div onclick="filterByStatus('all')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all cursor-pointer hover:-translate-y-1 hover:shadow-lg" data-status="all" id="statCardAll">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="text-sm text-slate-600 mb-1">Total Users</div>
+                        <div class="text-3xl font-bold text-slate-900" id="statTotal">50</div>
+                        <div class="text-xs text-slate-400 mt-2">All registered accounts</div>
+                    </div>
+
+                    <div onclick="filterByStatus('active')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all cursor-pointer hover:-translate-y-1 hover:shadow-lg" data-status="active">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="text-sm text-slate-600 mb-1">Active Users</div>
+                        <div class="text-3xl font-bold text-slate-900" id="statActive">35</div>
+                        <div class="text-xs text-slate-400 mt-2">Currently active</div>
+                    </div>
+
+                    <div onclick="filterByStatus('blocked')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all cursor-pointer hover:-translate-y-1 hover:shadow-lg" data-status="blocked">
+                        <div class="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="text-sm text-slate-600 mb-1">Blocked</div>
+                        <div class="text-3xl font-bold text-slate-900" id="statBlocked">8</div>
+                        <div class="text-xs text-slate-400 mt-2">Access suspended</div>
+                    </div>
+
+                    <div onclick="filterByStatus('restricted')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all cursor-pointer hover:-translate-y-1 hover:shadow-lg" data-status="restricted">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="text-sm text-slate-600 mb-1">Restricted</div>
+                        <div class="text-3xl font-bold text-slate-900" id="statRestricted">4</div>
+                        <div class="text-xs text-slate-400 mt-2">Limited access</div>
+                    </div>
+
+                    <div onclick="filterByStatus('removed')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all cursor-pointer hover:-translate-y-1 hover:shadow-lg" data-status="removed">
+                        <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <div class="text-sm text-slate-600 mb-1">Removed</div>
+                        <div class="text-3xl font-bold text-slate-900" id="statRemoved">3</div>
+                        <div class="text-xs text-slate-400 mt-2">Deleted accounts</div>
+                    </div>
+                </div>
+
+                <!-- User Table Card -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+                    <!-- Table Header -->
+                    <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">User Management</h2>
+                            <p class="text-sm text-slate-500">View and manage all user accounts</p>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="userSearch" placeholder="Search users..." 
+                                       class="pl-9 pr-4 py-2.5 w-64 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm"
+                                       oninput="filterUsers()">
+                            </div>
+
+                            <select id="statusFilter" onchange="filterUsers()" 
+                                    class="px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm bg-white">
+                                <option value="all">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="blocked">Blocked</option>
+                                <option value="restricted">Restricted</option>
+                                <option value="removed">Removed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Table with Scrollbar -->
+                    <div class="table-scroll-container">
+                        <table class="w-full text-left">
+                            <thead class="sticky top-0 bg-slate-50 z-10">
+                                <tr class="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-semibold">
+                                    <th class="px-6 py-4">ID</th>
+                                    <th class="px-6 py-4">User</th>
+                                    <th class="px-6 py-4">University UID</th>
+                                    <th class="px-6 py-4">Department</th>
+                                    <th class="px-6 py-4">Contact</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody" class="divide-y divide-slate-100 text-sm">
+                                <!-- Rows populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-sm text-slate-500">
+                            Showing <span class="font-semibold text-slate-900" id="showingStart">1</span>-<span class="font-semibold text-slate-900" id="showingEnd">10</span> of <span class="font-semibold text-slate-900" id="totalUsers">50</span> users
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button id="prevBtn" onclick="changePage(-1)" class="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                <i class="fas fa-chevron-left w-4 h-4"></i>
+                            </button>
+                            <div class="flex gap-1" id="pageNumbers"></div>
+                            <button id="nextBtn" onclick="changePage(1)" class="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                <i class="fas fa-chevron-right w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <button onclick="loadMoreUsers()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium shadow-md shadow-blue-500/20">
+                            <i class="fas fa-sync-alt"></i>
+                            Load More
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 2: User Details -->
+            <div id="userDetailsView" class="hidden max-w-7xl mx-auto">
+                <!-- Detail Header -->
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-4">
+                        <button onclick="backToList()" class="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-blue-600 hover:bg-white rounded-lg border border-slate-200 transition-all">
+                            <i class="fas fa-arrow-left"></i>
+                            <span class="font-medium">Back to Users</span>
+                        </button>
+                        <div class="h-8 w-px bg-slate-300"></div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-slate-900">User Details</h1>
+                            <p class="text-sm text-slate-500">Manage individual user information</p>
+                        </div>
+                    </div>
+                    <span id="detailStatusBadge" class="px-3 py-1.5 rounded-lg text-sm font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">Active</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left: User Info & Reset Data -->
+                    <div class="space-y-6">
+                        <!-- Personal Info Card -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-user text-blue-600"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-900">Personal Information</h3>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-4 bg-slate-50 rounded-xl">
+                                        <div class="text-xs font-semibold text-slate-500 uppercase mb-1">Full Name</div>
+                                        <div class="font-semibold text-slate-900" id="detailName">John Doe</div>
+                                    </div>
+                                    <div class="p-4 bg-slate-50 rounded-xl">
+                                        <div class="text-xs font-semibold text-slate-500 uppercase mb-1">University UID</div>
+                                        <div class="font-semibold text-slate-900 font-mono" id="detailUID">UNIV-CSE-45</div>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-slate-50 rounded-xl">
+                                    <div class="text-xs font-semibold text-slate-500 uppercase mb-1">Course / Department</div>
+                                    <div class="font-semibold text-slate-900" id="detailDept">Computer Science (B.Tech 3rd Year)</div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-4 bg-slate-50 rounded-xl">
+                                        <div class="text-xs font-semibold text-slate-500 uppercase mb-1">Roll Number</div>
+                                        <div class="font-semibold text-slate-900 font-mono" id="detailRoll">CSE2021045</div>
+                                    </div>
+                                    <div class="p-4 bg-slate-50 rounded-xl">
+                                        <div class="text-xs font-semibold text-slate-500 uppercase mb-1">Student ID</div>
+                                        <div class="font-semibold text-slate-900 font-mono" id="detailStudentId">STU-2021-045</div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-4 bg-slate-50 rounded-xl">
+                                        <div class="text-xs font-semibold text-slate-500 uppercase mb-1">Email</div>
+                                        <div class="font-semibold text-slate-900 text-sm" id="detailEmail">john.doe@university.edu</div>
+                                    </div>
+                                    <div class="p-4 bg-slate-50 rounded-xl">
+                                        <div class="text-xs font-semibold text-slate-500 uppercase mb-1">Phone</div>
+                                        <div class="font-semibold text-slate-900 text-sm" id="detailPhone">+91 98765 43210</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reset Data Card -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                                    <i class="fas fa-sync-alt text-purple-600"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-900">Update User Data</h3>
+                            </div>
+
+                            <form onsubmit="event.preventDefault(); saveResetData();" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Reset Password</label>
+                                        <div class="relative">
+                                            <input type="password" id="resetPassword" placeholder="New password" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm">
+                                            <button type="button" onclick="generatePassword()" class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-purple-600 hover:text-purple-700 font-medium">Generate</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Student ID</label>
+                                        <input type="text" id="resetStudentId" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm font-mono">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1.5">User Email ID</label>
+                                        <input type="email" id="resetUserEmail" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Phone Number</label>
+                                        <input type="tel" id="resetPhone" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Roll Number</label>
+                                        <input type="text" id="resetRoll" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Course / Department</label>
+                                        <input type="text" id="resetDept" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors font-medium shadow-md shadow-purple-500/20">
+                                    <i class="fas fa-save"></i>
+                                    Save Changes
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Right: Actions & Access -->
+                    <div class="space-y-6">
+                        <!-- Quick Actions -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                    <i class="fas fa-bolt text-orange-600"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-900">Quick Actions</h3>
+                            </div>
+
+                            <div class="space-y-4">
+                                <!-- Status Radio Buttons -->
+                                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                                    <label class="text-sm font-semibold text-slate-700 mb-3 block">Account Status</label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-emerald-400 transition-all has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50">
+                                            <input type="radio" name="userStatus" value="active" class="w-4 h-4 text-emerald-600" checked>
+                                            <span class="text-sm font-medium">Active</span>
+                                        </label>
+                                        <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-red-400 transition-all has-[:checked]:border-red-500 has-[:checked]:bg-red-50">
+                                            <input type="radio" name="userStatus" value="blocked" class="w-4 h-4 text-red-600">
+                                            <span class="text-sm font-medium">Block</span>
+                                        </label>
+                                        <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-amber-400 transition-all has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
+                                            <input type="radio" name="userStatus" value="restricted" class="w-4 h-4 text-amber-600">
+                                            <span class="text-sm font-medium">Restrict</span>
+                                        </label>
+                                        <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-slate-400 transition-all has-[:checked]:border-slate-500 has-[:checked]:bg-slate-100">
+                                            <input type="radio" name="userStatus" value="removed" class="w-4 h-4 text-slate-600">
+                                            <span class="text-sm font-medium">Remove</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Email Response -->
+                                <div class="border-t border-slate-100 pt-4">
+                                    <label class="block text-sm font-semibold text-slate-800 mb-3">Send Email Response</label>
+                                    <input type="text" id="emailSubject" placeholder="Subject" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm mb-3">
+                                    <textarea id="responseMessage" rows="3" placeholder="Message body..." class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm resize-none"></textarea>
+
+                                    <div class="mt-3 flex gap-3">
+                                        <button onclick="saveChanges()" class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium">
+                                            <i class="fas fa-save"></i>
+                                            Save Status
+                                        </button>
+                                        <button onclick="sendResponse()" class="flex-[2] flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium shadow-md shadow-blue-500/20">
+                                            <i class="fas fa-paper-plane"></i>
+                                            Send & Update
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Access User Section -->
+                        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 shadow-lg p-6 text-white">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                                    <i class="fas fa-external-link-alt text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold">Access User Dashboard</h3>
+                                    <p class="text-sm text-slate-400">Impersonate this user</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white/5 rounded-lg p-4 mb-4 border border-white/10">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-shield-alt text-amber-400 mt-0.5"></i>
+                                    <div class="text-sm text-slate-300">
+                                        <p class="text-white font-medium mb-1">Security Warning</p>
+                                        <p>All actions will be logged for audit purposes. Please confirm before proceeding.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="openUserLoginModal()" class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all font-semibold shadow-lg shadow-blue-500/25 hover:scale-[1.02] active:scale-[0.98]">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Access Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        
+    </main>
+
+    <!-- Support Modal -->
+    <div class="support-modal-overlay" id="supportModalOverlay">
+        <div class="support-modal">
+            <div class="support-modal-header">
+                <div class="support-modal-title">
+                    <i class="fas fa-headset"></i> Technical Support
+                </div>
+                <div style="font-size: 0.9rem; opacity: 0.9;">Report issues or request assistance from our development team</div>
+                <button class="support-modal-close" onclick="closeSupportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="support-tabs">
+                <button class="support-tab active" onclick="switchTab('new')">
+                    <i class="fas fa-plus-circle"></i> New Query
+                </button>
+                <button class="support-tab" onclick="switchTab('history')">
+                    <i class="fas fa-history"></i> My Queries
+                </button>
+            </div>
+
+            <div class="support-tab-content active" id="newQueryTab">
+                <form id="supportForm" onsubmit="submitSupportQuery(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Issue Type <span style="color: var(--danger)">*</span></label>
+                            <select class="form-select" id="issueType" required>
+                                <option value="">Select Issue Type</option>
+                                <option value="bug">Bug Report</option>
+                                <option value="feature">Feature Request</option>
+                                <option value="performance">Performance Issue</option>
+                                <option value="ui">UI/UX Problem</option>
+                                <option value="security">Security Concern</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Priority <span style="color: var(--danger)">*</span></label>
+                            <select class="form-select" id="priority" required>
+                                <option value="">Select Priority</option>
+                                <option value="low">Low - Minor issue</option>
+                                <option value="medium">Medium - Affects workflow</option>
+                                <option value="high">High - Critical issue</option>
+                                <option value="urgent">Urgent - System down</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Module/Screen <span style="color: var(--danger)">*</span></label>
+                        <select class="form-select" id="supportModule" required>
+                            <option value="">Select Module</option>
+                            <option value="account-activity">Account Activity</option>
+                            <option value="dashboard">Dashboard</option>
+                            <option value="grievances">Grievance Management</option>
+                            <option value="mail">Mail System</option>
+                            <option value="notifications">Notifications</option>
+                            <option value="reports">Reports & Analytics</option>
+                            <option value="user-management">User Management</option>
+                            <option value="settings">Settings</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Subject <span style="color: var(--danger)">*</span></label>
+                        <input type="text" class="form-input" id="supportSubject" placeholder="Brief description of the issue" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description <span style="color: var(--danger)">*</span></label>
+                        <textarea class="form-textarea" id="supportDescription" placeholder="Please provide detailed information about the issue..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="supportSubmitBtn">
+                        <i class="fas fa-paper-plane"></i> Submit Query
+                    </button>
+                </form>
+            </div>
+
+            <div class="support-tab-content" id="queryHistoryTab">
+                <div class="p-8 text-center text-slate-500">
+                    <i class="fas fa-inbox text-4xl mb-3"></i>
+                    <p>No previous queries found</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="userLoginModal" class="login-modal-overlay">
+        <div class="login-modal">
+            <button class="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-full transition-colors" onclick="closeUserLoginModal()">
+                <i class="fas fa-times text-slate-500"></i>
+            </button>
+
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">Welcome Back</h2>
+                <p class="text-slate-500">Sign in to access user dashboard</p>
+            </div>
+
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-exclamation-triangle text-amber-600 mt-0.5"></i>
+                    <div class="text-sm text-amber-800">
+                        <strong>Impersonation Mode</strong><br>
+                        You are accessing this account as an administrator.
+                    </div>
+                </div>
+            </div>
+
+            <form onsubmit="event.preventDefault(); proceedToUserDashboard();" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Select Role</label>
+                    <select id="impersonateRole" class="w-full px-3 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm">
+                        <option value="student" selected>Student</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Unique ID (UID)</label>
+                    <input type="text" id="impersonateUID" class="w-full px-3 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Email Address</label>
+                    <input type="email" id="impersonateEmail" class="w-full px-3 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+                    <div class="relative">
+                        <input type="password" id="impersonatePassword" class="w-full px-3 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm" required>
+                        <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded border-slate-300">
+                        <span class="text-slate-600">Remember me</span>
+                    </label>
+                    <a href="#" class="text-blue-600 hover:underline font-medium">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar Toggle Functionality from aa.html
+        const expandablePanel = document.getElementById('expandablePanel');
+        const mainContent = document.getElementById('mainContent');
+        const panelOverlay = document.getElementById('panelOverlay');
+        const iconSidebar = document.getElementById('iconSidebar');
+
+        function togglePanel() {
+            expandablePanel.classList.toggle('open');
+
+            if (window.innerWidth > 768) {
+                mainContent.classList.toggle('panel-open');
+            } else {
+                panelOverlay.classList.toggle('active');
+            }
+        }
+
+        function toggleMobileSidebar() {
+            iconSidebar.classList.toggle('mobile-open');
+            panelOverlay.classList.toggle('active');
+        }
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768 && expandablePanel.classList.contains('open')) {
+                    togglePanel();
+                }
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                panelOverlay.classList.remove('active');
+                iconSidebar.classList.remove('mobile-open');
+
+                if (expandablePanel.classList.contains('open')) {
+                    mainContent.classList.add('panel-open');
+                } else {
+                    mainContent.classList.remove('panel-open');
+                }
+            } else {
+                mainContent.classList.remove('panel-open');
+                if (expandablePanel.classList.contains('open')) {
+                    panelOverlay.classList.add('active');
+                }
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'm' || e.key === 'M') {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    togglePanel();
+                }
+            }
+        });
+
+        // Notification Badge Logic
+        function loadRealTimeStats() {
+            const regularDB = JSON.parse(localStorage.getItem('grievanceDatabase') || '{}');
+            let allGrievances = [];
+
+            for (const [category, complaints] of Object.entries(regularDB)) {
+                complaints.forEach(g => allGrievances.push({...g, isAnonymous: false}));
+            }
+
+            const anonDB = JSON.parse(localStorage.getItem('anonymousGrievanceDatabase') || '[]');
+            anonDB.forEach(g => allGrievances.push({...g, isAnonymous: true}));
+
+            const processingCount = allGrievances.filter(g => 
+                g.status === 'processing' || g.status === 'pending' || !g.status
+            ).length;
+
+            document.getElementById('notifBadge').textContent = processingCount;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadRealTimeStats);
+        setInterval(loadRealTimeStats, 30000);
+
+        // Support Modal Functions
+        function openSupportModal() {
+            document.getElementById('supportModalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSupportModal() {
+            document.getElementById('supportModalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.support-tab');
+            const contents = document.querySelectorAll('.support-tab-content');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            if (tab === 'new') {
+                tabs[0].classList.add('active');
+                document.getElementById('newQueryTab').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('queryHistoryTab').classList.add('active');
+            }
+        }
+
+        function submitSupportQuery(e) {
+            e.preventDefault();
+            closeSupportModal();
+            showNotification('Query submitted successfully!', 'success');
+            document.getElementById('supportForm').reset();
+        }
+
+
+        // Mobile Sidebar Toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        // Notification Badge Logic from AdminDashboard
+        function loadRealTimeStats() {
+            const regularDB = JSON.parse(localStorage.getItem('grievanceDatabase') || '{}');
+            let allGrievances = [];
+            
+            for (const [category, complaints] of Object.entries(regularDB)) {
+                complaints.forEach(g => allGrievances.push({...g, isAnonymous: false}));
+            }
+            
+            const anonDB = JSON.parse(localStorage.getItem('anonymousGrievanceDatabase') || '[]');
+            anonDB.forEach(g => allGrievances.push({...g, isAnonymous: true}));
+            
+            const processingCount = allGrievances.filter(g => 
+                g.status === 'processing' || g.status === 'pending' || !g.status
+            ).length;
+            
+            document.getElementById('notifBadge').textContent = processingCount;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadRealTimeStats);
+        setInterval(loadRealTimeStats, 30000);
+
+        // Support Modal Functions from AdminDashboard
+        function openSupportModal() {
+            document.getElementById('supportModalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSupportModal() {
+            document.getElementById('supportModalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.support-tab');
+            const contents = document.querySelectorAll('.support-tab-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            if (tab === 'new') {
+                tabs[0].classList.add('active');
+                document.getElementById('newQueryTab').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('queryHistoryTab').classList.add('active');
+            }
+        }
+
+        function submitSupportQuery(e) {
+            e.preventDefault();
+            closeSupportModal();
+            showNotification('Query submitted successfully!', 'success');
+            document.getElementById('supportForm').reset();
+        }
+
+        // Original Account Activity Script
+        let users = [
+            { id: 1, name: "John Doe", uid: "UNIV-CSE-45", dept: "Computer Science", course: "B.Tech 3rd Year", roll: "CSE2021045", studentId: "STU-2021-045", email: "john.doe@university.edu", phone: "+91 98765 43210", status: "active" },
+            { id: 2, name: "Alice Smith", uid: "UNIV-ECE-89", dept: "Electronics", course: "B.Tech 2nd Year", roll: "ECE2021089", studentId: "STU-2021-089", email: "alice.smith@university.edu", phone: "+91 98765 43211", status: "active" },
+            { id: 3, name: "Mike Kumar", uid: "UNIV-ME-56", dept: "Mechanical", course: "B.Tech Final Year", roll: "ME2021056", studentId: "STU-2021-056", email: "mike.k@university.edu", phone: "+91 98765 43212", status: "blocked" },
+            { id: 4, name: "Sarah Parker", uid: "UNIV-CV-123", dept: "Civil Engineering", course: "B.Tech 1st Year", roll: "CV2021123", studentId: "STU-2021-123", email: "sarah.p@university.edu", phone: "+91 98765 43213", status: "restricted" },
+            { id: 5, name: "Robert Johnson", uid: "UNIV-EE-98", dept: "Electrical", course: "Alumni", roll: "EE2020098", studentId: "STU-2020-098", email: "r.johnson@alumni.edu", phone: "+91 98765 43214", status: "removed" },
+            { id: 6, name: "Emily Davis", uid: "UNIV-CSE-46", dept: "Computer Science", course: "B.Tech 2nd Year", roll: "CSE2022046", studentId: "STU-2022-046", email: "emily.d@university.edu", phone: "+91 98765 43215", status: "active" },
+            { id: 7, name: "James Wilson", uid: "UNIV-ECE-90", dept: "Electronics", course: "B.Tech 3rd Year", roll: "ECE2021090", studentId: "STU-2021-090", email: "james.w@university.edu", phone: "+91 98765 43216", status: "active" },
+            { id: 8, name: "Maria Garcia", uid: "UNIV-ME-57", dept: "Mechanical", course: "B.Tech 2nd Year", roll: "ME2022057", studentId: "STU-2022-057", email: "maria.g@university.edu", phone: "+91 98765 43217", status: "active" },
+            { id: 9, name: "David Lee", uid: "UNIV-CV-124", dept: "Civil Engineering", course: "B.Tech 3rd Year", roll: "CV2021124", studentId: "STU-2021-124", email: "david.l@university.edu", phone: "+91 98765 43218", status: "blocked" },
+            { id: 10, name: "Lisa Wang", uid: "UNIV-EE-99", dept: "Electrical", course: "B.Tech Final Year", roll: "EE2021099", studentId: "STU-2021-099", email: "lisa.w@university.edu", phone: "+91 98765 43219", status: "restricted" }
+        ];
+
+        for(let i = 11; i <= 50; i++) {
+            const depts = ["Computer Science", "Electronics", "Mechanical", "Civil Engineering", "Electrical"];
+            const statuses = ["active", "active", "active", "blocked", "restricted", "removed"];
+            users.push({
+                id: i,
+                name: `User ${i}`,
+                uid: `UNIV-${depts[i%5].substring(0,3).toUpperCase()}-${100+i}`,
+                dept: depts[i%5],
+                course: `B.Tech ${(i%4)+1}th Year`,
+                roll: `${depts[i%5].substring(0,3).toUpperCase()}${2020+(i%4)}${100+i}`,
+                studentId: `STU-${2020+(i%4)}-${100+i}`,
+                email: `user${i}@university.edu`,
+                phone: `+91 98765 ${43210+i}`,
+                status: statuses[i%6]
+            });
+        }
+
+        let currentFilter = 'all';
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let currentUserId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+            updateStats();
+            // Set initial active stat card styling
+            filterByStatus('all');
+        });
+
+        function updateStats() {
+            const counts = {
+                all: users.length,
+                active: users.filter(u => u.status === 'active').length,
+                blocked: users.filter(u => u.status === 'blocked').length,
+                restricted: users.filter(u => u.status === 'restricted').length,
+                removed: users.filter(u => u.status === 'removed').length
+            };
+
+            document.getElementById('statTotal').textContent = counts.all;
+            document.getElementById('statActive').textContent = counts.active;
+            document.getElementById('statBlocked').textContent = counts.blocked;
+            document.getElementById('statRestricted').textContent = counts.restricted;
+            document.getElementById('statRemoved').textContent = counts.removed;
+        }
+
+        function filterByStatus(status) {
+            currentFilter = status;
+            document.getElementById('statusFilter').value = status;
+            currentPage = 1;
+
+            document.querySelectorAll('[data-status]').forEach(card => {
+                if(card.dataset.status === status) {
+                    card.classList.add('ring-2', 'ring-blue-500');
+                } else {
+                    card.classList.remove('ring-2', 'ring-blue-500');
+                }
+            });
+
+            renderTable();
+        }
+
+        function filterUsers() {
+            currentPage = 1;
+            renderTable();
+        }
+
+        function getFilteredUsers() {
+            const search = document.getElementById('userSearch').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+
+            return users.filter(user => {
+                const matchesSearch = user.name.toLowerCase().includes(search) || 
+                                     user.uid.toLowerCase().includes(search) ||
+                                     user.studentId.toLowerCase().includes(search);
+                const matchesStatus = status === 'all' || user.status === status;
+                return matchesSearch && matchesStatus;
+            });
+        }
+
+        function renderTable() {
+            const filtered = getFilteredUsers();
+            const start = (currentPage - 1) * itemsPerPage;
+            const pageUsers = filtered.slice(start, start + itemsPerPage);
+
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = '';
+
+            const colors = {
+                active: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                blocked: 'bg-red-100 text-red-700 border-red-200',
+                restricted: 'bg-amber-100 text-amber-700 border-amber-200',
+                removed: 'bg-slate-100 text-slate-600 border-slate-200'
+            };
+
+            pageUsers.forEach((user, idx) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-slate-50 transition-colors cursor-pointer';
+                row.onclick = () => openUserDetails(user.id);
+                row.innerHTML = `
+                    <td class="px-6 py-4 font-mono text-slate-600">${String(start+idx+1).padStart(2,'0')}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                ${user.name.split(' ').map(n=>n[0]).join('').substring(0,2)}
+                            </div>
+                            <div>
+                                <div class="font-semibold text-slate-900">${user.name}</div>
+                                <div class="text-xs text-slate-500">${user.studentId}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 font-mono text-sm text-slate-600">${user.uid}</td>
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-slate-900">${user.dept}</div>
+                        <div class="text-xs text-slate-500">${user.course}</div>
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        <div>${user.email}</div>
+                        <div class="text-slate-500">${user.phone}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold border ${colors[user.status]} capitalize">${user.status}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="event.stopPropagation(); openUserDetails(${user.id})" class="p-2 hover:bg-blue-50 rounded-lg text-blue-600 transition-colors">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('showingStart').textContent = filtered.length ? start + 1 : 0;
+            document.getElementById('showingEnd').textContent = Math.min(start + itemsPerPage, filtered.length);
+            document.getElementById('totalUsers').textContent = filtered.length;
+
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = start + itemsPerPage >= filtered.length;
+
+            renderPageNumbers(filtered.length);
+        }
+
+        function renderPageNumbers(total) {
+            const pages = Math.ceil(total / itemsPerPage);
+            const container = document.getElementById('pageNumbers');
+            container.innerHTML = '';
+
+            for(let i = 1; i <= Math.min(pages, 5); i++) {
+                const btn = document.createElement('button');
+                btn.className = `w-8 h-8 rounded-lg text-sm font-medium transition-colors ${i === currentPage ? 'bg-blue-600 text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'}`;
+                btn.textContent = i;
+                btn.onclick = () => { currentPage = i; renderTable(); };
+                container.appendChild(btn);
+            }
+        }
+
+        function changePage(dir) {
+            currentPage += dir;
+            renderTable();
+        }
+
+        function loadMoreUsers() {
+            const lastId = users[users.length - 1].id;
+            for(let i = 1; i <= 5; i++) {
+                users.push({
+                    id: lastId + i,
+                    name: `New User ${lastId + i}`,
+                    uid: `UNIV-NEW-${lastId + i}`,
+                    dept: "Computer Science",
+                    course: "B.Tech 1st Year",
+                    roll: `CSE2024${lastId + i}`,
+                    studentId: `STU-2024-${lastId + i}`,
+                    email: `newuser${lastId + i}@university.edu`,
+                    phone: `+91 98765 ${43210 + lastId + i}`,
+                    status: "active"
+                });
+            }
+            updateStats();
+            renderTable();
+            showNotification('5 more users loaded', 'success');
+        }
+
+        function openUserDetails(id) {
+            const user = users.find(u => u.id === id);
+            if(!user) return;
+
+            currentUserId = id;
+
+            document.getElementById('detailName').textContent = user.name;
+            document.getElementById('detailUID').textContent = user.uid;
+            document.getElementById('detailDept').textContent = `${user.dept} (${user.course})`;
+            document.getElementById('detailRoll').textContent = user.roll;
+            document.getElementById('detailStudentId').textContent = user.studentId;
+            document.getElementById('detailEmail').textContent = user.email;
+            document.getElementById('detailPhone').textContent = user.phone;
+
+            document.getElementById('resetStudentId').value = user.studentId;
+            document.getElementById('resetUserEmail').value = user.email;
+            document.getElementById('resetPhone').value = user.phone;
+            document.getElementById('resetRoll').value = user.roll;
+            document.getElementById('resetDept').value = user.dept;
+
+            document.getElementById('impersonateUID').value = user.uid;
+            document.getElementById('impersonateEmail').value = user.email;
+
+            document.getElementById('accountActivityView').classList.add('hidden');
+            document.getElementById('userDetailsView').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function backToList() {
+            document.getElementById('userDetailsView').classList.add('hidden');
+            document.getElementById('accountActivityView').classList.remove('hidden');
+            currentUserId = null;
+        }
+
+        function generatePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            let pass = '';
+            for(let i = 0; i < 12; i++) pass += chars[Math.floor(Math.random() * chars.length)];
+            document.getElementById('resetPassword').value = pass;
+        }
+
+        function saveResetData() {
+            const user = users.find(u => u.id === currentUserId);
+            if(user) {
+                user.studentId = document.getElementById('resetStudentId').value;
+                user.email = document.getElementById('resetUserEmail').value;
+                user.phone = document.getElementById('resetPhone').value;
+                user.roll = document.getElementById('resetRoll').value;
+                user.dept = document.getElementById('resetDept').value;
+
+                document.getElementById('detailEmail').textContent = user.email;
+                document.getElementById('detailPhone').textContent = user.phone;
+                document.getElementById('detailRoll').textContent = user.roll;
+                document.getElementById('detailDept').textContent = `${user.dept} (${user.course})`;
+                document.getElementById('detailStudentId').textContent = user.studentId;
+
+                renderTable();
+                showNotification('User data updated successfully', 'success');
+            }
+        }
+
+        function saveChanges() {
+            const user = users.find(u => u.id === currentUserId);
+            if(user) {
+                user.status = document.querySelector('input[name="userStatus"]:checked').value;
+                updateStats();
+                renderTable();
+
+                const badge = document.getElementById('detailStatusBadge');
+                const colors = {
+                    active: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                    blocked: 'bg-red-100 text-red-700 border-red-200',
+                    restricted: 'bg-amber-100 text-amber-700 border-amber-200',
+                    removed: 'bg-slate-100 text-slate-700 border-slate-200'
+                };
+                badge.className = `px-3 py-1.5 rounded-lg text-sm font-semibold border capitalize ${colors[user.status]}`;
+                badge.textContent = user.status;
+
+                showNotification(`Status updated to ${user.status}`, 'success');
+            }
+        }
+
+        function sendResponse() {
+            const subject = document.getElementById('emailSubject').value;
+            const message = document.getElementById('responseMessage').value;
+
+            if(!subject || !message) {
+                showNotification('Please fill subject and message', 'error');
+                return;
+            }
+
+            saveChanges();
+            showNotification('Response sent successfully', 'success');
+            document.getElementById('emailSubject').value = '';
+            document.getElementById('responseMessage').value = '';
+        }
+
+        function openUserLoginModal() {
+            document.getElementById('userLoginModal').classList.add('active');
+        }
+
+        function closeUserLoginModal() {
+            document.getElementById('userLoginModal').classList.remove('active');
+        }
+
+        function togglePassword() {
+            const input = document.getElementById('impersonatePassword');
+            const icon = document.getElementById('eyeIcon');
+            if(input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function proceedToUserDashboard() {
+            const uid = document.getElementById('impersonateUID').value;
+            const email = document.getElementById('impersonateEmail').value;
+            const pass = document.getElementById('impersonatePassword').value;
+
+            if(!uid || !email || !pass) {
+                showNotification('Please fill all fields', 'error');
+                return;
+            }
+
+            window.open('userDashboard.html', '_blank');
+            closeUserLoginModal();
+            showNotification('Opening user dashboard...', 'success');
+        }
+
+        function showNotification(msg, type = 'success') {
+            const div = document.createElement('div');
+            div.className = 'notification';
+            div.style.background = type === 'error' ? '#ef4444' : '#10b981';
+            div.textContent = msg;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+
+        document.getElementById('userLoginModal').addEventListener('click', function(e) {
+            if(e.target === this) closeUserLoginModal();
+        });
+
+        document.getElementById('supportModalOverlay').addEventListener('click', function(e) {
+            if(e.target === this) closeSupportModal();
+        });
+    
+    </script>
+</body>
+</html>

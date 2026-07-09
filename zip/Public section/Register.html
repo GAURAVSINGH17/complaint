@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Code Flow Digital Grievance Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #0d9488;
+            --accent: #f97316;
+            --accent-hover: #ea580c;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --error: #ef4444;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Main Container */
+        .auth-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Promo Side - Left */
+        .promo-side {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            text-align: center;
+        }
+
+        .promo-side::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .promo-content {
+            position: relative;
+            z-index: 1;
+            max-width: 450px;
+        }
+
+        .promo-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .promo-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .promo-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .promo-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .promo-text {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .promo-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2.5rem;
+            background: white;
+            color: var(--primary);
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .promo-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .promo-features {
+            margin-top: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            text-align: left;
+        }
+
+        .promo-feature {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .promo-feature i {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        /* Form Side - Right */
+        .form-side {
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem 5rem;
+            position: relative;
+            z-index: 2;
+            overflow-y: auto;
+        }
+
+        .form-header {
+            margin-bottom: 2rem;
+        }
+
+        .form-header h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Form Styles */
+        .auth-form {
+            max-width: 480px;
+            width: 100%;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 10fr ;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .form-group:focus-within .form-label {
+            color: var(--primary);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--text-primary);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .form-group:focus-within .input-icon {
+            color: var(--primary);
+        }
+
+        /* Select Dropdown */
+        select.form-input {
+            padding-left: 3rem;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.25rem;
+        }
+
+        /* Password Toggle */
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 0.5rem;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .password-strength.show {
+            display: block;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak { background: var(--error); width: 33%; }
+        .strength-medium { background: #f59e0b; width: 66%; }
+        .strength-strong { background: var(--success); width: 100%; }
+
+        .strength-text {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            color: var(--text-secondary);
+        }
+
+        /* Terms Checkbox */
+        .terms-group {
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .terms-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .terms-group label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            cursor: pointer;
+        }
+
+        .terms-group a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms-group a:hover {
+            text-decoration: underline;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Login Link */
+        .login-link {
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: var(--accent);
+        }
+
+        /* Decorative Elements */
+        .deco-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .deco-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -100px;
+        }
+
+        .deco-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: -50px;
+        }
+
+        /* Back to Home */
+        .back-link {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            z-index: 10;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        /* Admin Key Field Styling */
+        .admin-key-field {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .admin-key-field.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-notice {
+            font-size: 0.75rem;
+            color: var(--error);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .auth-container {
+                flex-direction: column;
+            }
+
+            .promo-side {
+                padding: 2rem;
+                min-height: 300px;
+            }
+
+            .form-side {
+                padding: 2rem;
+            }
+
+            .promo-title {
+                font-size: 2rem;
+            }
+
+            .form-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .promo-side {
+                min-height: 250px;
+                padding: 1.5rem;
+            }
+
+            .form-side {
+                padding: 1.5rem;
+            }
+
+            .promo-title {
+                font-size: 1.5rem;
+            }
+
+            .promo-subtitle {
+                font-size: 1rem;
+            }
+
+            .form-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Loading State */
+        .submit-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spinner 0.8s linear infinite;
+        }
+
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error State */
+        .form-group.error .form-input {
+            border-color: var(--error);
+        }
+
+        .form-group.error .input-icon {
+            color: var(--error);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Promo Side - Left -->
+        <div class="promo-side">
+            <div class="deco-circle deco-1"></div>
+            <div class="deco-circle deco-2"></div>
+
+            <div class="promo-content">
+                <div class="promo-logo">
+                    <div class="promo-icon">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    Code Flow
+                </div>
+
+                <h2 class="promo-title">Already Registered?</h2>
+                <p class="promo-subtitle">Welcome back!</p>
+                <p class="promo-text">
+                    Login to access your dashboard, track your complaints, and manage your account settings.
+                </p>
+
+                <a href="Login.html" class="promo-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </a>
+
+                <div class="promo-features">
+                    <div class="promo-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Access your complaint history</span>
+                    </div>
+                    <div class="promo-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Real-time status updates</span>
+                    </div>
+                    <div class="promo-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Secure document uploads</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Side - Right -->
+        <div class="form-side">
+            <a href="mainpg.html" class="back-link">
+                Back to Home <i class="fas fa-arrow-right"></i>
+            </a>
+
+            <div class="form-header">
+                <h1>Create Account</h1>
+                <p>Join us to start resolving your grievances</p>
+            </div>
+
+            <form class="auth-form" id="registerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" class="form-input" name="firstName" placeholder="Enter your full name" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Selection -->
+                <div class="form-group">
+                    <label class="form-label">Select Role</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-tag input-icon"></i>
+                        <select class="form-input" name="role" id="roleSelect" required>
+                            <option value="" disabled selected>Select your role</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Unique ID (UID)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-id-card input-icon"></i>
+                        <input type="text" class="form-input" name="uid" placeholder="Enter your UID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-phone input-icon"></i>
+                        <input type="tel" class="form-input" name="phone" placeholder="+91 98765 43210" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" class="form-input" name="email" placeholder="john.doe@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-input" id="password" name="password" placeholder="Create a strong password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength" id="strengthBar">
+                        <div class="strength-bar" id="strengthIndicator"></div>
+                    </div>
+                    <div class="strength-text" id="strengthText"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                </div>
+
+                <div class="terms-group">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">
+                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. 
+                        I consent to receiving updates about my complaints via email/SMS.
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Create Account
+                </button>
+
+                <div class="login-link">
+                    Already have an account? <a href="Login.html">Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Password Toggle
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Password Strength Checker
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthIndicator = document.getElementById('strengthIndicator');
+        const strengthText = document.getElementById('strengthText');
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+
+            if (password.length > 0) {
+                strengthBar.classList.add('show');
+
+                let strength = 0;
+                if (password.length >= 8) strength++;
+                if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+                if (password.match(/[0-9]/)) strength++;
+                if (password.match(/[^a-zA-Z0-9]/)) strength++;
+
+                strengthIndicator.className = 'strength-bar';
+
+                if (strength <= 1) {
+                    strengthIndicator.classList.add('strength-weak');
+                    strengthText.textContent = 'Weak password';
+                    strengthText.style.color = 'var(--error)';
+                } else if (strength === 2 || strength === 3) {
+                    strengthIndicator.classList.add('strength-medium');
+                    strengthText.textContent = 'Medium strength';
+                    strengthText.style.color = '#f59e0b';
+                } else {
+                    strengthIndicator.classList.add('strength-strong');
+                    strengthText.textContent = 'Strong password';
+                    strengthText.style.color = 'var(--success)';
+                }
+            } else {
+                strengthBar.classList.remove('show');
+                strengthText.textContent = '';
+            }
+        });
+
+        // Admin Key Field Toggle
+        const roleSelect = document.getElementById('roleSelect');
+        const adminKeyGroup = document.getElementById('adminKeyGroup');
+        const adminKeyInput = document.getElementById('adminKey');
+
+        roleSelect.addEventListener('change', function() {
+            if (this.value === 'admin') {
+                adminKeyGroup.classList.add('show');
+                adminKeyInput.setAttribute('required', 'required');
+            } else {
+                adminKeyGroup.classList.remove('show');
+                adminKeyInput.removeAttribute('required');
+                adminKeyInput.value = '';
+            }
+        });
+
+        // Form Submission with Admin Key Validation
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const role = roleSelect.value;
+            const adminKey = adminKeyInput.value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const btn = document.getElementById('submitBtn');
+
+            // Check password match
+            if (password !== confirmPassword) {
+                alert('❌ Passwords do not match!');
+                return;
+            }
+
+            // Admin Key Validation
+            const VALID_ADMIN_KEY = 'admin123'; // Change this to your secret code
+            
+            if (role === 'admin' && adminKey !== VALID_ADMIN_KEY) {
+                alert('❌ Invalid Admin Secret Code!\n\nPlease enter the correct code or contact administrator.');
+                return;
+            }
+
+            // Show loading
+            btn.classList.add('loading');
+            btn.textContent = '';
+
+            // Simulate API call
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                btn.textContent = 'Create Account';
+
+                if (role === 'admin') {
+                    alert('✅ Admin account created successfully!\n\nRedirecting to login...');
+                } else {
+                    alert('✅ Student account created successfully!\n\nRedirecting to login...');
+                }
+                
+                window.location.href = 'Login.html';
+            }, 1500);
+        });
+
+        // Input Animation
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.parentElement.classList.add('focused');
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.parentElement.classList.remove('focused');
+            });
+        });
+    </script>
+</body>
+</html>

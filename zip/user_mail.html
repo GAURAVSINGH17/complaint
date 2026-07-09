@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail & Messages - Student Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-lighter: #dbeafe;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f97316;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #f1f5f9;
+            --white: #ffffff;
+            --icon-bar-width: 70px;
+            --panel-width: 280px;
+            --navbar-height: 70px;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); min-height: 100vh; color: var(--dark); }
+
+        /* TOP NAVBAR */
+        .top-navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-height); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .nav-left { display: flex; align-items: center; flex: 1; }
+        .nav-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .nav-logo { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1rem; }
+        .nav-brand-text { font-weight: 800; font-size: 1.25rem; color: var(--primary); letter-spacing: -0.5px; }
+        .nav-center { flex: 1; max-width: 500px; margin: 0 2rem; }
+        .search-wrapper { position: relative; width: 100%; }
+        .search-box { width: 100%; padding: 0.625rem 1rem 0.625rem 2.5rem; border: 2px solid var(--light-gray); border-radius: 10px; font-size: 0.9rem; background: var(--white); transition: all 0.3s ease; font-family: 'Inter', sans-serif; }
+        .search-box:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .search-icon { position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--gray); font-size: 0.9rem; }
+        .nav-actions { display: flex; gap: 0.75rem; flex: 1; justify-content: flex-end; }
+        .nav-btn { padding: 0.625rem 1.25rem; border: none; border-radius: 10px; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem; text-decoration: none; background: var(--light-gray); color: var(--dark); }
+        .nav-btn:hover { background: var(--primary); color: white; transform: translateY(-2px); }
+        .nav-btn-accent { background: linear-gradient(135deg, var(--accent), var(--warning)); color: white; }
+        .nav-btn-accent:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4); }
+
+        /* SIDEBAR */
+        .sidebar-wrapper { position: fixed; left: 0; top: var(--navbar-height); bottom: 0; z-index: 900; display: flex; }
+        .icon-sidebar { width: var(--icon-bar-width); background: var(--white); border-right: 1px solid var(--light-gray); display: flex; flex-direction: column; align-items: center; padding: 1rem 0; z-index: 901; box-shadow: 2px 0 10px rgba(0,0,0,0.05); }
+        .icon-nav { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; padding: 0 0.75rem; }
+        .icon-btn { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: var(--gray); font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; position: relative; text-decoration: none; border: none; background: transparent; }
+        .icon-btn:hover { background: var(--primary-lighter); color: var(--primary); }
+        .icon-btn.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3); }
+        .icon-btn.active::before { content: ''; position: absolute; left: -0.75rem; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: var(--primary); border-radius: 0 3px 3px 0; }
+        .toggle-expand { margin-bottom: 0.5rem; font-size: 1rem; }
+        .toggle-expand:hover { background: var(--primary); color: white; transform: scale(1.05); }
+        .icon-btn::after { content: attr(data-label); position: absolute; left: 60px; background: var(--dark); color: white; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 500; white-space: nowrap; opacity: 0; visibility: hidden; transform: translateX(-10px); transition: all 0.3s ease; z-index: 1000; pointer-events: none; }
+        .icon-btn:hover::after { opacity: 1; visibility: visible; transform: translateX(0); }
+
+        /* EXPANDABLE PANEL */
+        .expandable-panel { width: var(--panel-width); background: var(--white); border-right: 1px solid var(--light-gray); height: calc(100vh - var(--navbar-height)); overflow-y: auto; padding: 1.5rem; transform: translateX(-100%); transition: var(--transition); box-shadow: 4px 0 20px rgba(0,0,0,0.08); z-index: 900; position: absolute; left: var(--icon-bar-width); top: 0; }
+        .expandable-panel.open { transform: translateX(0); }
+        .user-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 16px; padding: 1.25rem; text-align: center; margin-bottom: 1.5rem; color: white; box-shadow: 0 10px 25px rgba(30, 64, 175, 0.2); }
+        .user-avatar { width: 50px; height: 50px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; margin: 0 auto 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; border: 2px solid rgba(255, 255, 255, 0.3); }
+        .user-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .user-role { font-size: 0.75rem; opacity: 0.9; }
+        .nav-section { margin-bottom: 1.25rem; }
+        .section-title { font-size: 0.65rem; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; padding-left: 0.5rem; }
+        .section-menu { display: flex; flex-direction: column; gap: 0.25rem; }
+        .menu-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 10px; text-decoration: none; color: var(--gray); font-weight: 500; font-size: 0.85rem; transition: all 0.3s ease; }
+        .menu-item:hover { background: var(--light-gray); color: var(--primary); }
+        .menu-item.active { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(14, 165, 233, 0.1)); color: var(--primary); font-weight: 600; }
+        .menu-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+        .signout-btn { width: 100%; background: linear-gradient(135deg, #fee2e2, #fecaca); color: #dc2626; border: none; padding: 0.75rem; border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s ease; text-decoration: none; margin-top: 0.5rem; }
+        .signout-btn:hover { background: linear-gradient(135deg, #fecaca, #fca5a5); transform: translateY(-2px); }
+
+        /* MAIN CONTENT */
+        .main-content { margin-left: var(--icon-bar-width); margin-top: var(--navbar-height); padding: 2rem; min-height: calc(100vh - var(--navbar-height)); transition: var(--transition); }
+        .main-content.panel-open { margin-left: calc(var(--icon-bar-width) + var(--panel-width)); }
+        .panel-overlay { position: fixed; top: var(--navbar-height); left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 800; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .panel-overlay.active { opacity: 1; visibility: visible; }
+
+        /* MAIL STYLES */
+        .back-btn { display: none; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: var(--white); border: 2px solid var(--light-gray); border-radius: 10px; font-weight: 600; color: var(--gray); cursor: pointer; margin-bottom: 1.5rem; transition: all 0.2s ease; }
+        .back-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .back-btn.visible { display: inline-flex; }
+        .selection-page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 200px); }
+        .selection-title { font-size: 2.5rem; font-weight: 800; color: var(--dark); margin-bottom: 0.5rem; text-align: center; }
+        .selection-subtitle { color: var(--gray); font-size: 1.1rem; margin-bottom: 3rem; text-align: center; }
+        .communication-card { background: var(--white); border-radius: 24px; padding: 3rem 4rem; box-shadow: var(--shadow-xl); border: 1px solid rgba(226, 232, 240, 0.6); text-align: center; max-width: 450px; width: 100%; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
+        .communication-card:hover { transform: translateY(-5px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+        .icon-circle { width: 100px; height: 100px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; position: relative; }
+        .icon-circle::before { content: ''; position: absolute; width: 120px; height: 120px; background: rgba(219, 234, 254, 0.4); border-radius: 50%; z-index: -1; }
+        .icon-circle i { font-size: 2.5rem; color: var(--primary); }
+        .card-title { font-size: 1.75rem; font-weight: 700; color: var(--dark); margin-bottom: 0.75rem; }
+        .card-description { color: var(--gray); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; }
+        .open-mails-btn { background: linear-gradient(135deg, var(--primary) 0%, #2563eb 50%, var(--secondary) 100%); color: white; border: none; padding: 1rem 3rem; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.75rem; box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3); }
+        .open-mails-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(30, 64, 175, 0.4); background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #0284c7 100%); }
+
+        .mail-container { display: none; background: var(--white); border-radius: 20px; box-shadow: var(--shadow-sm); overflow: hidden; height: calc(100vh - 200px); border: 1px solid var(--light-gray); }
+        .mail-layout { display: flex; height: 100%; }
+        .mail-sidebar { width: 260px; background: #f8fafc; border-right: 1px solid var(--light-gray); padding: 1.5rem; display: flex; flex-direction: column; }
+        .compose-btn { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 1rem; border-radius: 16px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 1.5rem; box-shadow: var(--shadow); transition: all 0.3s ease; }
+        .compose-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .mail-folders { display: flex; flex-direction: column; gap: 0.25rem; }
+        .mail-folder { display: flex; align-items: center; gap: 1rem; padding: 0.875rem 1rem; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; color: var(--gray); font-weight: 500; }
+        .mail-folder:hover { background: var(--light-gray); color: var(--dark); }
+        .mail-folder.active { background: var(--primary); color: white; }
+        .mail-folder i { width: 20px; text-align: center; }
+        .mail-folder-count { margin-left: auto; background: var(--light-gray); color: var(--gray); padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
+        .mail-folder.active .mail-folder-count { background: rgba(255, 255, 255, 0.2); color: white; }
+        .mail-list-area { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--light-gray); }
+        .mail-list-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--light-gray); display: flex; align-items: center; justify-content: space-between; }
+        .mail-list-title { font-weight: 700; font-size: 1.25rem; color: var(--dark); }
+        .mail-list-actions { display: flex; gap: 0.5rem; }
+        .mail-action-btn { width: 36px; height: 36px; border: none; background: var(--light-gray); border-radius: 10px; cursor: pointer; color: var(--gray); transition: all 0.2s ease; }
+        .mail-action-btn:hover { background: var(--primary-lighter); color: var(--primary); }
+        .mail-search { padding: 1rem 1.5rem; border-bottom: 1px solid var(--light-gray); }
+        .mail-search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 2px solid var(--light-gray); border-radius: 12px; font-size: 0.9rem; transition: all 0.3s ease; }
+        .mail-search-input:focus { outline: none; border-color: var(--primary-light); }
+        .mail-items { flex: 1; overflow-y: auto; }
+        .mail-item { padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: flex-start; gap: 1rem; }
+        .mail-item:hover { background: #f8fafc; }
+        .mail-item.selected { background: var(--primary-lighter); }
+        .mail-item.unread { background: #eff6ff; }
+        .mail-item.unread .mail-sender-name, .mail-item.unread .mail-subject { font-weight: 700; }
+        .mail-star { color: #cbd5e1; cursor: pointer; transition: all 0.2s ease; margin-top: 4px; }
+        .mail-star.starred { color: var(--accent); }
+        .mail-star:hover { color: var(--accent); }
+        .mail-content-preview { flex: 1; min-width: 0; }
+        .mail-sender-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem; }
+        .mail-sender-name { font-weight: 500; color: var(--dark); }
+        .mail-date { font-size: 0.8rem; color: var(--gray); }
+        .mail-subject { color: var(--dark); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mail-preview-text { color: var(--gray); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .mail-detail-full { display: none; position: fixed; top: var(--navbar-height); left: var(--icon-bar-width); right: 0; bottom: 0; background: var(--white); z-index: 50; overflow-y: auto; padding: 2rem; }
+        .main-content.panel-open .mail-detail-full { left: calc(var(--icon-bar-width) + var(--panel-width)); }
+        .mail-detail-full.active { display: block; }
+        .mail-detail-header-full { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--light-gray); }
+        .mail-detail-actions-full { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .mail-detail-btn-full { padding: 0.75rem 1.25rem; border: 1px solid var(--light-gray); background: var(--white); border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 600; color: var(--gray); transition: all 0.2s ease; display: flex; align-items: center; gap: 0.5rem; }
+        .mail-detail-btn-full:hover { background: var(--light-gray); color: var(--dark); transform: translateY(-2px); }
+        .mail-detail-btn-full.back-btn-full { background: var(--primary-lighter); color: var(--primary); }
+        .mail-detail-btn-full.back-btn-full:hover { background: var(--primary); color: white; }
+        .mail-detail-subject-full { font-size: 1.75rem; font-weight: 700; color: var(--dark); margin-bottom: 1.5rem; line-height: 1.3; }
+        .mail-detail-meta-full { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; background: #f8fafc; padding: 1.5rem; border-radius: 16px; }
+        .mail-detail-avatar-full { width: 56px; height: 56px; border-radius: 50%; background: var(--primary-lighter); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 700; font-size: 1.25rem; }
+        .mail-detail-info-full { flex: 1; }
+        .mail-detail-from-full { font-weight: 700; font-size: 1.1rem; color: var(--dark); margin-bottom: 0.25rem; }
+        .mail-detail-email-full { color: var(--gray); font-size: 0.9rem; }
+        .mail-detail-time-full { color: var(--gray); font-size: 0.9rem; text-align: right; }
+        .mail-detail-body-full { background: #f8fafc; border-radius: 16px; padding: 2rem; line-height: 1.8; color: var(--dark); font-size: 1rem; white-space: pre-wrap; margin-bottom: 2rem; }
+        .mail-detail-attachments-full { background: var(--white); border: 2px solid var(--light-gray); border-radius: 16px; padding: 1.5rem; }
+        .attachment-label-full { font-weight: 700; color: var(--dark); font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .attachment-list-full { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .attachment-item-full { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--primary-lighter); border-radius: 12px; font-size: 0.95rem; color: var(--primary); cursor: pointer; transition: all 0.2s ease; text-decoration: none; border: 2px solid transparent; }
+        .attachment-item-full:hover { background: var(--primary); color: white; transform: translateY(-2px); box-shadow: var(--shadow); }
+
+        .compose-modal { position: fixed; bottom: 0; right: 20px; width: 600px; background: var(--white); border-radius: 16px 16px 0 0; box-shadow: var(--shadow-xl); z-index: 1000; display: none; flex-direction: column; max-height: 600px; border: 1px solid var(--light-gray); border-bottom: none; }
+        .compose-modal.active { display: flex; }
+        .compose-header { padding: 1rem 1.5rem; background: var(--dark); color: white; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; }
+        .compose-title { font-weight: 600; }
+        .compose-close { background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
+        .compose-body { padding: 1.5rem; flex: 1; overflow-y: auto; }
+        .compose-field { margin-bottom: 1rem; }
+        .compose-label { display: block; font-weight: 600; color: var(--dark); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .compose-input { width: 100%; padding: 0.875rem 1rem; border: 2px solid var(--light-gray); border-radius: 10px; font-size: 0.95rem; font-family: inherit; transition: all 0.3s ease; }
+        .compose-input:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .compose-input:disabled { background: var(--light-gray); cursor: not-allowed; color: var(--gray); }
+        .compose-textarea { min-height: 200px; resize: vertical; }
+        .compose-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--light-gray); display: flex; justify-content: space-between; align-items: center; }
+        .compose-actions { display: flex; gap: 0.75rem; }
+        .btn-send { padding: 0.75rem 1.5rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; }
+        .btn-send:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3); }
+        .btn-draft { padding: 0.75rem 1.5rem; background: var(--light-gray); color: var(--gray); border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-draft:hover { background: #e2e8f0; }
+
+        .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--gray); padding: 3rem; }
+        .empty-state i { font-size: 4rem; margin-bottom: 1rem; color: var(--light-gray); }
+        .empty-state-text { font-size: 1.1rem; text-align: center; }
+        .notification { position: fixed; top: 100px; right: 20px; background: linear-gradient(135deg, var(--success), #059669); color: white; padding: 1rem 1.5rem; border-radius: 12px; box-shadow: var(--shadow-lg); z-index: 9999; font-weight: 600; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 1; } }
+        .mail-header { margin-bottom: 2rem; display: none; }
+        .mail-header.visible { display: block; }
+        .mail-title { font-size: 2rem; font-weight: 800; color: var(--dark); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem; }
+        .mail-title i { color: var(--primary); }
+        .mail-subtitle { color: var(--gray); font-size: 0.95rem; }
+
+        .mobile-menu-btn { display: none; width: 36px; height: 36px; border-radius: 8px; background: var(--light-gray); border: none; color: var(--dark); cursor: pointer; align-items: center; justify-content: center; font-size: 1rem; margin-right: 0.75rem; }
+
+        @media (max-width: 1024px) { .nav-center { display: none; } }
+        @media (max-width: 768px) {
+            .icon-sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .icon-sidebar.mobile-open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .main-content.panel-open { margin-left: 0; }
+            .expandable-panel { left: 0; top: 0; height: 100vh; z-index: 902; }
+            .mobile-menu-btn { display: flex !important; }
+            .nav-brand-text { display: none; }
+            .nav-btn span { display: none; }
+            .nav-btn { padding: 0.625rem; }
+            .mail-detail-full { left: 0; padding: 1rem; }
+            .main-content.panel-open .mail-detail-full { left: 0; }
+            .mail-detail-meta-full { flex-direction: column; text-align: center; }
+            .mail-detail-time-full { text-align: center; }
+            .communication-card { padding: 2rem; }
+            .selection-title { font-size: 2rem; }
+            .compose-modal { width: 100%; right: 0; left: 0; border-radius: 0; }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="panel-overlay" id="panelOverlay" onclick="togglePanel()"></div>
+
+    <!-- TOP NAVBAR -->
+    <nav class="top-navbar">
+        <div class="nav-left">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="UserDashboard.html" class="nav-brand">
+                <div class="nav-logo"><i class="fas fa-code-branch"></i></div>
+                <span class="nav-brand-text">CODE FLOW</span>
+            </a>
+        </div>
+        <div class="nav-center">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-box" placeholder="Search notices...">
+            </div>
+        </div>
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="location.href='UserDashboard.html'"><i class="fas fa-home"></i> <span>Home</span></button>
+            <button class="nav-btn"><i class="fas fa-bell"></i> <span>Notifications</span><span style="background: var(--danger); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 4px;">2</span></button>
+            <button class="nav-btn nav-btn-accent" onclick="openSupportModal()"><i class="fas fa-headset"></i> <span>Support</span></button>
+        </div>
+    </nav>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar-wrapper">
+        <aside class="icon-sidebar" id="iconSidebar">
+            <nav class="icon-nav">
+                <button class="icon-btn toggle-expand active" onclick="togglePanel()" data-label="Expand Menu" id="toggleBtn"><i class="fas fa-table-columns" id="toggleIcon"></i></button>
+                <a href="UserDashboard.html" class="icon-btn" data-label="Dashboard"><i class="fas fa-th-large"></i></a>
+                <a href="Grievanceform.html" class="icon-btn" data-label="Submit Grievance"><i class="fas fa-plus-circle"></i></a>
+                <a href="user_AllGrievances.html" class="icon-btn" data-label="My Grievances"><i class="fas fa-clipboard-list"></i></a>
+                <a href="user_insights&dasboard.html" class="icon-btn" data-label="Insights"><i class="fas fa-chart-pie"></i></a>
+                <a href="user_checkstatus.html" class="icon-btn" data-label="Check Status"><i class="fas fa-tasks"></i></a>
+                <a href="user_mail.html" class="icon-btn active" data-label="Mail"><i class="fas fa-envelope"></i></a>
+                <a href="user_Guildelines.html" class="icon-btn" data-label="Guidelines"><i class="fas fa-book"></i></a>
+                <a href="notice_board.html" class="icon-btn" data-label="Notice Board"><i class="fas fa-bullhorn"></i></a>
+                <a href="userEditProfile.html" class="icon-btn" data-label="Edit Profile"><i class="fas fa-user-cog"></i></a>
+            </nav>
+        </aside>
+
+        <div class="expandable-panel" id="expandablePanel">
+            <div class="user-card">
+                <div class="user-avatar"><i class="fas fa-user-graduate"></i></div>
+                <div class="user-name">John Doe</div>
+                <div class="user-role">Student</div>
+            </div>
+            <div class="nav-section">
+                <div class="section-title">Main Menu</div>
+                <nav class="section-menu">
+                    <a href="UserDashboard.html" class="menu-item"><span class="menu-icon"><i class="fas fa-th-large"></i></span><span>Dashboard</span></a>
+                    <a href="Grievanceform.html" class="menu-item"><span class="menu-icon"><i class="fas fa-plus-circle"></i></span><span>Submit Grievance</span></a>
+                    <a href="user_AllGrievances.html" class="menu-item"><span class="menu-icon"><i class="fas fa-clipboard-list"></i></span><span>My Grievances</span></a>
+                    <a href="user_insights&dasboard.html" class="menu-item"><span class="menu-icon"><i class="fas fa-chart-pie"></i></span><span>Insights & Dashboard</span></a>
+                    <a href="user_checkstatus.html" class="menu-item"><span class="menu-icon"><i class="fas fa-tasks"></i></span><span>Check Status</span></a>
+                </nav>
+            </div>
+            <div class="nav-section">
+                <div class="section-title">Communication</div>
+                <nav class="section-menu">
+                    <a href="user_mail.html" class="menu-item active"><span class="menu-icon"><i class="fas fa-envelope"></i></span><span>Mail</span></a>
+                    <a href="user_Guildelines.html" class="menu-item"><span class="menu-icon"><i class="fas fa-book"></i></span><span>Guidelines</span></a>
+                    <a href="notice_board.html" class="menu-item"><span class="menu-icon"><i class="fas fa-bullhorn"></i></span><span>Notice Board</span></a>
+                </nav>
+            </div>
+            <div class="nav-section">
+                <div class="section-title">Account</div>
+                <nav class="section-menu">
+                    <a href="userEditProfile.html" class="menu-item"><span class="menu-icon"><i class="fas fa-user-cog"></i></span><span>Edit Profile</span></a>
+                </nav>
+            </div>
+            <button class="signout-btn" onclick="location.href='login.html'"><i class="fas fa-sign-out-alt"></i><span>Sign Out</span></button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="mainContent">
+        <button class="back-btn" id="backBtn" onclick="backToSelection()"><i class="fas fa-arrow-left"></i> Back to Mail Section</button>
+
+        <div class="selection-page" id="selectionPage">
+            <h1 class="selection-title">Mail Section</h1>
+            <p class="selection-subtitle">Select Communication Type</p>
+            <div class="communication-card" onclick="openMailSection()">
+                <div class="icon-circle"><i class="fas fa-envelope"></i></div>
+                <h2 class="card-title">Mails</h2>
+                <p class="card-description">Formal complaints & documents<br>Official communication channel</p>
+                <button class="open-mails-btn">Open Mails <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div class="mail-header" id="mailHeader">
+            <h1 class="mail-title"><i class="fas fa-envelope-open-text"></i>My Messages</h1>
+            <p class="mail-subtitle">Communicate with administration and support staff</p>
+        </div>
+
+        <div class="mail-container" id="mailContainer">
+            <div class="mail-layout">
+                <div class="mail-sidebar">
+                    <button class="compose-btn" onclick="openCompose()"><i class="fas fa-pen"></i> Compose</button>
+                    <div class="mail-folders">
+                        <div class="mail-folder active" onclick="selectFolder('inbox', this)"><i class="fas fa-inbox"></i><span>Inbox</span><span class="mail-folder-count" id="inboxCount">3</span></div>
+                        <div class="mail-folder" onclick="selectFolder('starred', this)"><i class="fas fa-star"></i><span>Starred</span></div>
+                        <div class="mail-folder" onclick="selectFolder('sent', this)"><i class="fas fa-paper-plane"></i><span>Sent</span><span class="mail-folder-count" id="sentCount">2</span></div>
+                        <div class="mail-folder" onclick="selectFolder('draft', this)"><i class="fas fa-file-alt"></i><span>Draft</span><span class="mail-folder-count" id="draftCount">1</span></div>
+                    </div>
+                </div>
+                <div class="mail-list-area">
+                    <div class="mail-list-header">
+                        <h2 class="mail-list-title" id="folderTitle">Inbox</h2>
+                        <div class="mail-list-actions">
+                            <button class="mail-action-btn" title="Refresh" onclick="refreshMails()"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="mail-search">
+                        <input type="text" class="mail-search-input" placeholder="Search mails..." id="mailSearch" onkeyup="searchMails()">
+                    </div>
+                    <div class="mail-items" id="mailItems"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="mail-detail-full" id="mailDetailFull">
+        <div class="mail-detail-header-full">
+            <div class="mail-detail-actions-full">
+                <button class="mail-detail-btn-full back-btn-full" onclick="closeMailDetail()"><i class="fas fa-arrow-left"></i> Back to Inbox</button>
+                <button class="mail-detail-btn-full" onclick="replyMail()"><i class="fas fa-reply"></i> Reply</button>
+                <button class="mail-detail-btn-full" onclick="deleteMailFull()"><i class="fas fa-trash"></i> Delete</button>
+            </div>
+        </div>
+        <h2 class="mail-detail-subject-full" id="detailSubjectFull"></h2>
+        <div class="mail-detail-meta-full">
+            <div class="mail-detail-avatar-full" id="detailAvatarFull"></div>
+            <div class="mail-detail-info-full">
+                <div class="mail-detail-from-full" id="detailFromFull"></div>
+                <div class="mail-detail-email-full" id="detailEmailFull"></div>
+            </div>
+            <div class="mail-detail-time-full" id="detailTimeFull"></div>
+        </div>
+        <div class="mail-detail-body-full" id="detailBodyFull"></div>
+        <div class="mail-detail-attachments-full" id="detailAttachmentsFull" style="display: none;">
+            <div class="attachment-label-full"><i class="fas fa-paperclip"></i> Attachments</div>
+            <div class="attachment-list-full" id="attachmentListFull"></div>
+        </div>
+    </div>
+
+    <div class="compose-modal" id="composeModal">
+        <div class="compose-header">
+            <span class="compose-title"><i class="fas fa-paper-plane"></i> New Message to Administration</span>
+            <button class="compose-close" onclick="closeCompose()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="compose-body">
+            <div class="compose-field">
+                <label class="compose-label">To (Administration)</label>
+                <input type="text" class="compose-input" value="admin@codeflow.edu" disabled>
+                <small style="color: var(--gray); margin-top: 0.5rem; display: block;"><i class="fas fa-lock"></i> Messages can only be sent to administration</small>
+            </div>
+            <div class="compose-field">
+                <label class="compose-label">Subject *</label>
+                <input type="text" class="compose-input" placeholder="Enter subject..." id="composeSubject">
+            </div>
+            <div class="compose-field">
+                <label class="compose-label">Message *</label>
+                <textarea class="compose-input compose-textarea" placeholder="Write your message here..." id="composeBody"></textarea>
+            </div>
+            <div class="compose-field">
+                <label class="compose-label"><i class="fas fa-paperclip"></i> Attachments (Optional)</label>
+                <input type="file" class="compose-input" id="composeAttachment" style="padding: 0.5rem;">
+            </div>
+        </div>
+        <div class="compose-footer">
+            <div class="compose-actions">
+                <button class="btn-send" onclick="sendMail()"><i class="fas fa-paper-plane"></i> Send Message</button>
+                <button class="btn-draft" onclick="saveDraft()">Save as Draft</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Panel Toggle
+        const expandablePanel = document.getElementById('expandablePanel');
+        const mainContent = document.getElementById('mainContent');
+        const panelOverlay = document.getElementById('panelOverlay');
+        const iconSidebar = document.getElementById('iconSidebar');
+
+        function togglePanel() {
+            expandablePanel.classList.toggle('open');
+            if (window.innerWidth > 768) {
+                mainContent.classList.toggle('panel-open');
+            } else {
+                panelOverlay.classList.toggle('active');
+            }
+        }
+
+        function toggleMobileSidebar() {
+            iconSidebar.classList.toggle('mobile-open');
+            panelOverlay.classList.toggle('active');
+        }
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768 && expandablePanel.classList.contains('open')) {
+                    togglePanel();
+                }
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                panelOverlay.classList.remove('active');
+                iconSidebar.classList.remove('mobile-open');
+                if (expandablePanel.classList.contains('open')) {
+                    mainContent.classList.add('panel-open');
+                } else {
+                    mainContent.classList.remove('panel-open');
+                }
+            } else {
+                mainContent.classList.remove('panel-open');
+                if (expandablePanel.classList.contains('open')) {
+                    panelOverlay.classList.add('active');
+                }
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'm' || e.key === 'M') {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    togglePanel();
+                }
+            }
+        });
+
+        // Mail Data
+        let mailsData = [
+            { id: 1, from: "Admin Office", fromEmail: "admin@codeflow.edu", subject: "Re: Fee Payment Confirmation", preview: "Your fee payment for Spring Semester 2026 has been received and confirmed...", body: "Dear John,\n\nYour fee payment for Spring Semester 2026 has been received and confirmed.\n\nPayment Details:\n- Amount: ₹50,000\n- Transaction ID: TXN123456789\n- Date: January 10, 2026\n\nPlease keep this email for your records. If you have any questions, feel free to reply to this email.\n\nBest regards,\nAdmin Office\nCode Flow University", date: "2026-01-11", time: "10:30 AM", starred: true, read: true, folder: "inbox", attachments: [{ name: "receipt.pdf", type: "application/pdf", size: "245 KB" }] },
+            { id: 2, from: "Examination Cell", fromEmail: "exams@codeflow.edu", subject: "Mid-Semester Exam Schedule", preview: "The mid-semester examination schedule has been published...", body: "Dear Student,\n\nThe mid-semester examination schedule has been published. Please find the attached timetable for your reference.\n\nImportant Notes:\n- Exams begin on January 20, 2026\n- Reporting time: 8:30 AM\n- Bring your ID card and admit card\n\nAll the best for your exams!\n\nRegards,\nExamination Cell", date: "2026-01-12", time: "2:15 PM", starred: false, read: false, folder: "inbox", attachments: [{ name: "exam_schedule.pdf", type: "application/pdf", size: "320 KB" }] },
+            { id: 3, from: "Library", fromEmail: "library@codeflow.edu", subject: "Book Return Reminder", preview: "This is a gentle reminder that the book is due for return...", body: "Dear John,\n\nThis is a gentle reminder that the book 'Database Systems' is due for return on January 15, 2026.\n\nPlease return or renew the book to avoid late fees.\n\nThank you,\nLibrary Management", date: "2026-01-13", time: "9:00 AM", starred: false, read: false, folder: "inbox", attachments: [] },
+            { id: 4, from: "John Doe", fromEmail: "john.doe@krmu.edu.in", subject: "Regarding Hostel Accommodation", preview: "I would like to request a room change due to maintenance issues...", body: "Dear Admin,\n\nI would like to request a room change due to maintenance issues in my current room.\n\nPlease let me know the procedure.\n\nThanks,\nJohn Doe", date: "2026-01-10", time: "4:30 PM", starred: false, read: true, folder: "sent", attachments: [] },
+            { id: 5, from: "John Doe", fromEmail: "john.doe@krmu.edu.in", subject: "Scholarship Application", preview: "I am writing to apply for the merit scholarship...", body: "Dear Scholarship Committee,\n\nI am writing to apply for the merit scholarship for the current academic year.\n\nMy academic details:\n- CGPA: 8.9\n- Attendance: 95%\n\nRegards,\nJohn Doe", date: "2026-01-08", time: "11:00 AM", starred: true, read: true, folder: "sent", attachments: [{ name: "academic_records.pdf", type: "application/pdf", size: "450 KB" }] }
+        ];
+
+        let currentFolder = 'inbox';
+        let selectedMail = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('section') === 'mail') {
+                openMailSection();
+            }
+        });
+
+        function openMailSection() {
+            document.getElementById('selectionPage').style.display = 'none';
+            document.getElementById('mailContainer').style.display = 'block';
+            document.getElementById('mailHeader').classList.add('visible');
+            document.getElementById('backBtn').classList.add('visible');
+            loadMails('inbox');
+            updateFolderCounts();
+        }
+
+        function backToSelection() {
+            document.getElementById('selectionPage').style.display = 'flex';
+            document.getElementById('mailContainer').style.display = 'none';
+            document.getElementById('mailHeader').classList.remove('visible');
+            document.getElementById('backBtn').classList.remove('visible');
+            document.getElementById('mailDetailFull').classList.remove('active');
+            selectedMail = null;
+        }
+
+        function selectFolder(folder, element) {
+            document.querySelectorAll('.mail-folder').forEach(f => f.classList.remove('active'));
+            element.classList.add('active');
+            currentFolder = folder;
+            const titles = { inbox: 'Inbox', starred: 'Starred', sent: 'Sent', draft: 'Draft' };
+            document.getElementById('folderTitle').textContent = titles[folder] || folder;
+            loadMails(folder);
+        }
+
+        function loadMails(folder) {
+            const container = document.getElementById('mailItems');
+            container.innerHTML = '';
+            let folderMails = [];
+            if (folder === 'starred') {
+                folderMails = mailsData.filter(mail => mail.starred);
+            } else if (folder === 'draft') {
+                folderMails = mailsData.filter(mail => mail.folder === 'draft');
+            } else {
+                folderMails = mailsData.filter(mail => mail.folder === folder);
+            }
+
+            if (folderMails.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p class="empty-state-text">No emails in ' + folder + '</p></div>';
+                return;
+            }
+
+            folderMails.forEach(mail => {
+                const div = document.createElement('div');
+                div.className = 'mail-item ' + (mail.read ? '' : 'unread');
+                div.onclick = () => openMailDetail(mail);
+                div.innerHTML = `<i class="fas fa-star mail-star ${mail.starred ? 'starred' : ''}" onclick="toggleStar(event, ${mail.id})"></i><div class="mail-content-preview"><div class="mail-sender-row"><span class="mail-sender-name">${mail.from}</span><span class="mail-date">${mail.date}</span></div><div class="mail-subject">${mail.subject}</div><div class="mail-preview-text">${mail.preview}</div></div>`;
+                container.appendChild(div);
+            });
+        }
+
+        function openMailDetail(mail) {
+            selectedMail = mail;
+            if (!mail.read) {
+                mail.read = true;
+                updateFolderCounts();
+                loadMails(currentFolder);
+            }
+            document.getElementById('mailContainer').style.display = 'none';
+            document.getElementById('mailHeader').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('mailDetailFull').classList.add('active');
+            document.getElementById('detailSubjectFull').textContent = mail.subject;
+            document.getElementById('detailFromFull').textContent = mail.from;
+            document.getElementById('detailEmailFull').textContent = mail.fromEmail;
+            document.getElementById('detailTimeFull').textContent = mail.date + ' at ' + mail.time;
+            document.getElementById('detailAvatarFull').textContent = mail.from.charAt(0).toUpperCase();
+            document.getElementById('detailBodyFull').textContent = mail.body;
+            const attachDiv = document.getElementById('detailAttachmentsFull');
+            if (mail.attachments && mail.attachments.length > 0) {
+                attachDiv.style.display = 'block';
+                document.getElementById('attachmentListFull').innerHTML = mail.attachments.map(att => `<div class="attachment-item-full" onclick="showNotification('Downloading ${att.name}')"><i class="fas fa-file"></i><div><div style="font-weight: 600;">${att.name}</div><div style="font-size: 0.8rem; opacity: 0.8;">${att.size}</div></div></div>`).join('');
+            } else {
+                attachDiv.style.display = 'none';
+            }
+        }
+
+        function closeMailDetail() {
+            document.getElementById('mailDetailFull').classList.remove('active');
+            document.getElementById('mailContainer').style.display = 'block';
+            document.getElementById('mailHeader').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'inline-flex';
+            selectedMail = null;
+        }
+
+        function toggleStar(event, mailId) {
+            event.stopPropagation();
+            const mail = mailsData.find(m => m.id === mailId);
+            if (mail) {
+                mail.starred = !mail.starred;
+                event.target.classList.toggle('starred');
+                if (currentFolder === 'starred') loadMails('starred');
+            }
+        }
+
+        function updateFolderCounts() {
+            const inboxUnread = mailsData.filter(m => m.folder === 'inbox' && !m.read).length;
+            const sentCount = mailsData.filter(m => m.folder === 'sent').length;
+            const draftCount = mailsData.filter(m => m.folder === 'draft').length;
+            document.getElementById('inboxCount').textContent = inboxUnread > 0 ? inboxUnread : '';
+            document.getElementById('sentCount').textContent = sentCount > 0 ? sentCount : '';
+            document.getElementById('draftCount').textContent = draftCount > 0 ? draftCount : '';
+        }
+
+        function searchMails() {
+            const query = document.getElementById('mailSearch').value.toLowerCase();
+            document.querySelectorAll('.mail-item').forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(query) ? 'flex' : 'none';
+            });
+        }
+
+        function refreshMails() {
+            const btn = document.querySelector('.mail-action-btn i');
+            btn.classList.add('fa-spin');
+            setTimeout(() => {
+                btn.classList.remove('fa-spin');
+                showNotification('Mails refreshed');
+            }, 1000);
+        }
+
+        function openCompose() {
+            document.getElementById('composeModal').classList.add('active');
+        }
+
+        function closeCompose() {
+            document.getElementById('composeModal').classList.remove('active');
+            document.getElementById('composeSubject').value = '';
+            document.getElementById('composeBody').value = '';
+            document.getElementById('composeAttachment').value = '';
+        }
+
+        function sendMail() {
+            const subject = document.getElementById('composeSubject').value;
+            const body = document.getElementById('composeBody').value;
+            if (!subject || !body) {
+                alert('Please fill in subject and message');
+                return;
+            }
+            const newMail = {
+                id: Date.now(),
+                from: "John Doe",
+                fromEmail: "john.doe@krmu.edu.in",
+                subject: subject,
+                preview: body.substring(0, 100) + '...',
+                body: body,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                starred: false,
+                read: true,
+                folder: "sent",
+                attachments: []
+            };
+            mailsData.push(newMail);
+            closeCompose();
+            updateFolderCounts();
+            if (currentFolder === 'sent') loadMails('sent');
+            showNotification('Message sent to administration');
+        }
+
+        function saveDraft() {
+            const subject = document.getElementById('composeSubject').value;
+            const body = document.getElementById('composeBody').value;
+            if (!subject && !body) { closeCompose(); return; }
+            const draftMail = {
+                id: Date.now(),
+                from: "Draft",
+                fromEmail: "",
+                subject: subject || "No Subject",
+                preview: body.substring(0, 100) + '...' || "Empty draft",
+                body: body,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                starred: false,
+                read: true,
+                folder: "draft",
+                attachments: []
+            };
+            mailsData.push(draftMail);
+            closeCompose();
+            updateFolderCounts();
+            if (currentFolder === 'draft') loadMails('draft');
+            showNotification('Draft saved');
+        }
+
+        function replyMail() {
+            if (!selectedMail) return;
+            document.getElementById('composeSubject').value = 'Re: ' + selectedMail.subject;
+            document.getElementById('composeBody').value = '\n\n---\nOn ' + selectedMail.date + ', ' + selectedMail.from + ' wrote:\n' + selectedMail.body;
+            openCompose();
+            closeMailDetail();
+        }
+
+        function deleteMailFull() {
+            if (!selectedMail || !confirm('Are you sure you want to delete this email?')) return;
+            const index = mailsData.findIndex(m => m.id === selectedMail.id);
+            if (index > -1) {
+                mailsData.splice(index, 1);
+                updateFolderCounts();
+                closeMailDetail();
+                loadMails(currentFolder);
+                showNotification('Email deleted');
+            }
+        }
+
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.textContent = message;
+            document.body.appendChild(notif);
+            setTimeout(() => {
+                notif.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+        }
+
+        function openSupportModal() {
+            showNotification('Support feature coming soon!');
+        }
+    </script>
+</body>
+</html>
